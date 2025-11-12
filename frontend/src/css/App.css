@@ -1,0 +1,15 @@
+* {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body chiếm toàn bộ màn hình */
+body, html {
+  width: 100%;
+  height: 100%;
+  font-family: 'Arial', sans-serif;
+  background-color: #f0f2f5; /* nền nhẹ nhàng */
+}
+
