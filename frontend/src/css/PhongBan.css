@@ -54,14 +54,15 @@
 .content_title_pb {
   display: flex;
   align-items: center;
-  width: 50%;
+  width: 40%;
 }
 
 .content_title_pb button {
-background: linear-gradient(90deg, #007bff, #0066ff);
+background: linear-gradient(90deg, #0066ff, #0066ff);
   color: #fff;
   align-items: center;
   justify-content: center;
+  width: 100%;
 }
 
 .content_title_2 button:hover {
@@ -172,7 +173,7 @@ background: linear-gradient(90deg, #007bff, #0066ff);
 .form_overlay {
   position: fixed;
   inset: 0; /* phủ toàn màn hình */
-  background: rgba(0, 0, 0, 0.4); /* mờ nền */
+  background: rgba(0, 0, 0, 0.5); /* mờ nền */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -185,8 +186,8 @@ background: linear-gradient(90deg, #007bff, #0066ff);
   background: #fff;
   border-radius: 12px;
   padding: 24px 32px;
-  min-width: 360px;
-  max-width: 400px;
+  min-width: 500px;
+  max-width: 550px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
   animation: popup 0.3s ease;
 }
@@ -244,45 +245,52 @@ background: linear-gradient(90deg, #007bff, #0066ff);
 }
 
 /* === Nút thêm và hủy === */
-.form_buttons {
+.form_buttons_pb {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
   gap: 10px; /* khoảng cách giữa 2 nút */
   margin-top: 20px;
+  width: 336px;
 }
 
-/* === Nút Thêm mới === */
-.form_buttons .button_add button {
+
+.form_buttons_pb .button_add button {
   background-color: #007bff;
   color: #fff;
   border: none;
   border-radius: 8px;
-  padding: 8px 130px;
+  white-space: nowrap;
+  padding: 8px 0;
   font-size: 14px;
   cursor: pointer;
+  width: 256px;
   transition: background 0.2s, transform 0.1s;
 }
 
-.form_buttons .button_add button:hover {
+.form_buttons_pb .button_add button:hover {
   background-color: #0063d1;
   transform: scale(1.03);
 }
 
-/* === Nút Hủy === */
-.form_buttons .button_cancel button {
-  background-color: #ccc;
+.form_buttons_pb .button_cancel {
+  border: 1.5px solid #82d1f0;
+  border-radius: 8px;
+}
+.form_buttons_pb .button_cancel button {
+  background-color: #ffffff;
   color: #333;
   border: none;
   border-radius: 8px;
   padding: 8px 16px;
   font-size: 14px;
   cursor: pointer;
+  width: 70px;
   transition: background 0.2s, transform 0.1s;
 }
 
-.form_buttons .button_cancel button:hover {
-  background-color: #aaa;
+.form_buttons_pb .button_cancel button:hover {
+  background-color: #b3daff;
   transform: scale(1.03);
 }
 

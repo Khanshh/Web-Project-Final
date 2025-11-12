@@ -198,7 +198,7 @@ const ListPhongBan: React.FC = () => {
                   <option value="Ngừng hoạt động">Ngừng hoạt động</option>
               </select>
             </div>
-            <div className="form_buttons">
+            <div className="form_buttons_pb">
               <div className="button_add">
                 <button onClick={handleAddPhongBan}> Thêm mới </button>
               </div>
@@ -253,7 +253,7 @@ const ListPhongBan: React.FC = () => {
                   <option value="Ngừng hoạt động">Ngừng hoạt động</option>
               </select>
             </div>
-            <div className="form_buttons">
+            <div className="form_buttons_pb">
               <div className="button_add">
                 <button onClick={() =>handleUpdatePhongBan(maPBCu)}> Cập nhật </button>
               </div>

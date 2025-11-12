@@ -252,7 +252,7 @@ const ListNhanVien: React.FC = () => {
                 onChange={(e) => setmucLuongCoBan(e.target.value)} 
                 />
             </div>
-            <div className="form_buttons">
+            <div className="form_buttons_nv">
               <div className="button_add">
                 <button onClick={handleAddNhanVien}> Thêm mới </button>
               </div>
@@ -315,7 +315,7 @@ const ListNhanVien: React.FC = () => {
                 onChange={(e) => setmucLuongCoBanMoi(e.target.value)} 
                 />
             </div>
-            <div className="form_buttons">
+            <div className="form_buttons_nv">
               <div className="button_add">
                 <button onClick={() =>handleUpdateNhanVien(maNVCu)}> Cập nhật </button>
               </div>

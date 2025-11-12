@@ -143,7 +143,7 @@ const ListChucVu: React.FC = () => {
                 onChange={(e) => settenCV(e.target.value)}
               />
             </div>
-            <div className="form_buttons">
+            <div className="form_buttons_cv">
               <div className="button_add">
                 <button onClick={handleAddChucVu}> Thêm mới </button>
               </div>
@@ -179,7 +179,7 @@ const ListChucVu: React.FC = () => {
                 onChange={(e) => settenCVMoi(e.target.value)}
               />
             </div>
-            <div className="form_buttons">
+            <div className="form_buttons_cv">
               <div className="button_add">
                 <button onClick={() =>handleUpdateChucVu(maCVCU)}> Cập nhật </button>
               </div>

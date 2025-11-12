@@ -35,7 +35,7 @@ const TaiKhoan_Admin = () => {
                 <p>Nhân viên & Lương</p>
 
                 <h4>Thông tin người đăng nhập</h4>
-                <h4>VD : Nguyễn Văn A</h4>
+                <h4>ADMIN</h4>
             </div>
             <nav className="menu-page">
                 <ul>
