@@ -1,5 +1,8 @@
 import { useState } from "react";
 import "./App.css";
+import { useEffect, useRef } from "react";
+import Chart from "chart.js/auto";
+
 
 function App() {
   const [username, setUsername] = useState("");
@@ -22,6 +25,47 @@ function App() {
       alert("❌ Sai tên đăng nhập hoặc mật khẩu!");
     }
   };
+
+const DashboardChart = () => {
+  const chartRef = useRef<HTMLCanvasElement>(null);
+  const chartInstanceRef = useRef<Chart | null>(null);
+
+  useEffect(() => {
+    if (!chartRef.current) return;
+
+    if (chartInstanceRef.current) chartInstanceRef.current.destroy();
+
+    chartInstanceRef.current = new Chart(chartRef.current, {
+      type: "bar",
+      data: {
+        labels: ["Trưởng phòng", "Phó phòng", "Nhân viên"],
+        datasets: [
+          {
+            label: "Số lượng",
+            data: [2, 3, 1],
+            backgroundColor: ["#4f8beb", "#0350f5", "#72c2ff"],
+            borderColor: ["#4f8beb", "#0350f5", "#72c2ff"],
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: { beginAtZero: true, ticks: { stepSize: 1 } },
+        },
+        plugins: { legend: { display: false } },
+      },
+    });
+  }, []);
+
+  return (
+    <div style={{ height: "300px", width: "100%" }}>
+      <canvas ref={chartRef} />
+    </div>
+  );
+};
 
   // Nếu đã đăng nhập thì hiển thị trang chính
   if (loggedIn) {
@@ -107,14 +151,7 @@ function App() {
 
           <section className="card wide">
             <h3>Phân bố theo Chức vụ</h3>
-            <div className="chart-placeholder">
-              <div className="y-axis">
-                <div>4</div><div>3</div><div>2</div><div>1</div><div>0</div>
-              </div>
-              <div className="x-axis">
-                Trưởng phòng &nbsp;&nbsp; Phó phòng &nbsp;&nbsp; Nhân viên
-              </div>
-            </div>
+              <DashboardChart />
           </section>
 
           <section className="card">
@@ -144,6 +181,7 @@ function App() {
       </div>
     </>
   )}
+ 
 
            {activePage === "attendance" && (
     <div className="content">

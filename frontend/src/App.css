@@ -311,11 +311,7 @@ body{
 }
 
 /* grid layout similar to screenshot: two columns wide cards + others */
-.grid{
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap:18px;
-}
+
 
 /* card base */
 .card{
@@ -332,10 +328,21 @@ body{
 .stat .stat-sub{font-size:13px;color:var(--muted);line-height:1.2}
 
 /* wide card spans two columns */
-.card.wide{grid-column: span 1; min-height:200px}
-@media(min-width:1100px){
-  .card.wide{grid-column: span 2}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 cột bằng nhau */
+  gap: 20px; /* khoảng cách giữa 2 ô */
+  align-items: stretch; /* cho 2 card cao bằng nhau */
 }
+
+.card.wide {
+  grid-column: span 1; /* mỗi card chiếm 1 cột */
+  min-height: 240px; /* chiều cao tùy bạn */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 
 /* placeholder blocks to mimic empty states */
 .placeholder{
