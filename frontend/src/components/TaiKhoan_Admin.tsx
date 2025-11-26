@@ -15,7 +15,13 @@ interface MenuPage {
     icon: string;
 }
 
-const TaiKhoan_Admin = () => {
+interface TaiKhoanAdminProps {
+  setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
+  setUsername: React.Dispatch<React.SetStateAction<string>>;
+  setPassword: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const TaiKhoan_Admin: React.FC<TaiKhoanAdminProps> = ({ setLoggedIn, setUsername, setPassword }) => {
 
   const menupages: MenuPage[] = [
         {path: '/trangchu', label: 'Trang Chủ', icon: '🏠'},
@@ -47,6 +53,12 @@ const TaiKhoan_Admin = () => {
                         </li>
                     ))}
                 </ul>
+                <div className="sidebar-bottom">
+                  <button className="logout" onClick={() => { setLoggedIn(false); setUsername(""); setPassword(""); }}>
+                    ⏎ Đăng xuất
+                  </button>
+                  <div className="copyright">© 2025 Hệ thống Quản lý Nhân viên</div>
+                </div>
             </nav>
         </div>
         <div className="app-content">
@@ -60,6 +72,7 @@ const TaiKhoan_Admin = () => {
             <Route path="/baocaoluong" element={<BaoCaoLuong />} />
           </Routes>
         </div>
+     
       </div>
     );
 }
