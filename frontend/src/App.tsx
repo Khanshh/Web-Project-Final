@@ -9,6 +9,7 @@ function App() {
   const [password, setPassword] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
   const [activePage, setActivePage] = useState("dashboard");
+  const [reportType, setReportType] = useState("day");
 
   // Tài khoản mẫu có sẵn
   const sampleAccount = {
@@ -100,7 +101,8 @@ const DashboardChart = () => {
               <a className="nav-item"><span className="icon">👥</span>Nhân viên</a>
               <a  className={`nav-item ${activePage === "attendance" ? "active" : ""}`} 
     onClick={() => setActivePage("attendance")}><span className="icon">⏱️</span>Chấm công</a>
-              <a className="nav-item"><span className="icon">💲</span>Báo cáo lương</a>
+              <a className={`nav-item ${activePage === "salary-report" ? "active" : ""}`} 
+    onClick={() => setActivePage("salary-report")}><span className="icon">💲</span>Báo cáo lương</a>
             </nav>
           </div>
 
@@ -218,6 +220,169 @@ const DashboardChart = () => {
       </div>
     </div>
   )}
+  {activePage === "salary-report" && (
+  <div className="content">
+    <h2 style={{ fontSize: "24px", marginBottom: "-0.3cm" }}>Báo cáo lương</h2>
+    <p>Thống kê thu nhập theo cá nhân và theo khoảng thời gian</p>
+
+    {/* Tabs chọn chế độ */}
+    <div style={{ display: "flex", gap: "10px", marginTop: "18px" }}>
+      <button
+        onClick={() => setReportType("day")}
+        style={{
+          padding: "8px 16px",
+          borderRadius: "25px",
+          border: reportType === "day" ? "1px solid #4a80ff" : "1px solid #ccc",
+          background: reportType === "day" ? "#e9f0ff" : "#f9f9f9",
+          color: reportType === "day" ? "#0040c1" : "#333",
+          fontWeight: 600,
+          cursor: "pointer",
+          transition: "0.25s",
+        }}
+      >
+        📊 Báo cáo theo ngày
+      </button>
+
+      <button
+        onClick={() => setReportType("month")}
+        style={{
+          padding: "8px 16px",
+          borderRadius: "25px",
+          border: reportType === "month" ? "1px solid #4a80ff" : "1px solid #ccc",
+          background: reportType === "month" ? "#e9f0ff" : "#f9f9f9",
+          color: reportType === "month" ? "#0040c1" : "#333",
+          fontWeight: 600,
+          cursor: "pointer",
+          transition: "0.25s",
+        }}
+      >
+        📅 Báo cáo theo tháng
+      </button>
+    </div>
+
+    {/* --- Nội dung Báo cáo theo Ngày --- */}
+    {reportType === "day" && (
+      <div className="card" style={{ marginTop: "20px" }}>
+        <h3>Báo cáo thu nhập cá nhân theo ngày</h3>
+        <p>Thống kê lương và thưởng của nhân viên trong một ngày cụ thể</p>
+
+        <div style={{ display: "flex", gap: "40px", alignItems: "flex-end", marginTop: "20px" }}>
+          <div style={{ flex: 1 }}>
+            <label style={{ fontWeight: "600" }}>Chọn nhân viên</label>
+            <select
+              style={{
+                width: "100%",
+                padding: "10px",
+                borderRadius: "10px",
+                border: "1px solid #ccc",
+                background: "#f9fbfe",
+              }}
+            >
+              <option value="">Chọn nhân viên</option>
+              <option value="NV001">Nguyễn Văn A</option>
+              <option value="NV002">Trần Thị B</option>
+              <option value="NV003">Lê Văn C</option>
+            </select>
+          </div>
+
+          <div style={{ flex: 1 }}>
+            <label style={{ fontWeight: "600" }}>Chọn ngày</label>
+            <input
+              type="date"
+              defaultValue="2025-11-12"
+              style={{
+                width: "100%",
+                padding: "10px",
+                borderRadius: "10px",
+                border: "1px solid #ccc",
+                background: "#f9fbfe",
+              }}
+            />
+          </div>
+        </div>
+
+        <div style={{ marginTop: "30px" }}>
+          <h4>Kết quả thu nhập</h4>
+          <table style={{ width: "100%", marginTop: "8px", borderCollapse: "collapse" }}>
+            <thead>
+              <tr style={{ background: "#f1f5ff", textAlign: "left" }}>
+                <th style={{ padding: "10px" }}>Khoản mục</th>
+                <th style={{ padding: "10px" }}>Số tiền (VND)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style={{ padding: "10px" }}>Lương cơ bản</td>
+                <td style={{ padding: "10px" }}>15,000,000</td>
+              </tr>
+              <tr>
+                <td style={{ padding: "10px" }}>Thưởng chuyên cần</td>
+                <td style={{ padding: "10px" }}>1,000,000</td>
+              </tr>
+              <tr>
+                <td style={{ padding: "10px" }}>Phụ cấp</td>
+                <td style={{ padding: "10px" }}>500,000</td>
+              </tr>
+              <tr style={{ background: "#f9f9f9", fontWeight: "600" }}>
+                <td style={{ padding: "10px" }}>Tổng thu nhập</td>
+                <td style={{ padding: "10px", color: "#0040c1" }}>16,500,000</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )}
+
+    {/* --- Nội dung Báo cáo theo Tháng --- */}
+    {reportType === "month" && (
+      <div className="card" style={{ marginTop: "20px" }}>
+        <h3>Báo cáo tổng hợp theo tháng</h3>
+        <p>Hiển thị tổng lương, thưởng và phụ cấp trong tháng</p>
+
+        <div style={{ display: "flex", gap: "40px", alignItems: "flex-end", marginTop: "20px" }}>
+          <div style={{ flex: 1 }}>
+            <label style={{ fontWeight: "600" }}>Chọn nhân viên</label>
+            <select
+              style={{
+                width: "100%",
+                padding: "10px",
+                borderRadius: "10px",
+                border: "1px solid #ccc",
+                background: "#f9fbfe",
+              }}
+            >
+              <option value="">Chọn nhân viên</option>
+              <option value="NV001">Nguyễn Văn A</option>
+              <option value="NV002">Trần Thị B</option>
+              <option value="NV003">Lê Văn C</option>
+            </select>
+          </div>
+
+          <div style={{ flex: 1 }}>
+            <label style={{ fontWeight: "600" }}>Chọn tháng</label>
+            <input
+              type="month"
+              defaultValue="2025-11"
+              style={{
+                width: "100%",
+                padding: "10px",
+                borderRadius: "10px",
+                border: "1px solid #ccc",
+                background: "#f9fbfe",
+              }}
+            />
+          </div>
+        </div>
+
+        <div className="placeholder" style={{ marginTop: "30px" }}>
+          Chưa có dữ liệu báo cáo tháng này
+        </div>
+      </div>
+    )}
+  </div>
+)}
+
+ 
         </main>
       </div>
     );
