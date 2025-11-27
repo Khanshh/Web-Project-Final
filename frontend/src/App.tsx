@@ -438,6 +438,8 @@ const DashboardChart = () => {
       </div>
     </div>
   );
+    </div>
+  );
 }
 
 export default App;
