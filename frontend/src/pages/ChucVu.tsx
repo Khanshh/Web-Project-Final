@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import "../css/ChucVu.css";
 import axios from "axios";
 
@@ -7,7 +7,7 @@ interface ChucVu {
   ten_chuc_vu: string;
 }
 
-const ListChucVu: React.FC = () => {
+const ListChucVu = () => {
   const [chucVu, setChucVu] = useState<ChucVu[]>([]);
   const [showForm, setshowForm] = useState(false);
   const [maCV, setmaCV] = useState("");

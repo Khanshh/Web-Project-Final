@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import '../css/NhanVien.css';
 import axios from "axios";
 
@@ -21,7 +21,7 @@ interface PhongBan {
   ten_phong: string;
 }
 
-const ListNhanVien: React.FC = () => {
+const ListNhanVien = () => {
   const [nhamVien, setNhanVien] = useState<NhanVien[]>([]);
   const [showForm, setshowForm] = useState(false);
   const [maNV, setmaNV] = useState("");
@@ -134,8 +134,8 @@ const ListNhanVien: React.FC = () => {
   const openUpdateForm = (nv: NhanVien) => {
     setmaNVCu(nv.ma_nhan_vien);
     sethoTenMoi(nv.ho_ten);
-    const tencv = chucVu.find((i) => i.ma_chuc_vu === nv.ma_chuc_vu);
-    setmaChucVuMoi(tencv ? `${tencv.ten_chuc_vu} (${tencv.ma_chuc_vu})` : "");
+    setmaPhongMoi(nv.ma_phong);
+    setmaChucVuMoi(nv.ma_chuc_vu);
     setmucLuongCoBanMoi(nv.muc_luong_co_ban);
     setformUpdate(true);
   };
@@ -158,7 +158,7 @@ const ListNhanVien: React.FC = () => {
           <button onClick={() => setShowTable(!showTable)}>{showTable ? "Ẩn nhân viên" : "Hiển thị nhân viên"}</button>
         </div>
         <div className="content_title_nv">
-          <button onClick={() => setshowForm(true)}>+ Thêm phòng ban</button>
+          <button onClick={() => setshowForm(true)}>+ Thêm nhân viên</button>
         </div>
       </div>
 
@@ -282,8 +282,8 @@ const ListNhanVien: React.FC = () => {
             <div className="form_input">
               <label>Phòng ban</label>
               <select 
-                value={maPhong}
-                onChange={(e) => setmaPhong(e.target.value)}
+                value={maPhongMoi}
+                onChange={(e) => setmaPhongMoi(e.target.value)}
                 >
                   <option value="">--- Chọn ---</option>
                   {phongBan.map((pb) => (

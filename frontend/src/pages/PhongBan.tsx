@@ -1,4 +1,4 @@
-import React,{useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import '../css/PhongBan.css';
 import axios from "axios";
 
@@ -10,7 +10,7 @@ interface PhongBan {
   trang_thai: string;
 }
 
-const ListPhongBan: React.FC = () => {
+const ListPhongBan = () => {
   const [phongBan, setPhongBan] = useState<PhongBan[]>([]);
   const [showForm, setshowForm] = useState(false);
   const [maPB, setmaPB] = useState("");

@@ -1,7 +1,11 @@
 import { useState } from "react";
-import "./App.css";
+import "./css/App.css";
+import "./css/TrangChu.css";
 import { useEffect, useRef } from "react";
 import Chart from "chart.js/auto";
+import ListPhongBan from "./pages/PhongBan";
+import ListChucVu from "./pages/ChucVu";
+import ListNhanVien from "./pages/NhanVien";
 
 
 function App() {
@@ -97,8 +101,10 @@ const DashboardChart = () => {
     onClick={() => setActivePage("dashboard")}><span className="icon">🏠</span>Trang chủ</a>
               <a className={`nav-item ${activePage === "department" ? "active" : ""}`} 
     onClick={() => setActivePage("department")} ><span className="icon">🏢</span>Phòng ban</a>
-              <a className="nav-item"><span className="icon">🎓</span>Chức vụ</a>
-              <a className="nav-item"><span className="icon">👥</span>Nhân viên</a>
+              <a className={`nav-item ${activePage === "position" ? "active" : ""}`} 
+    onClick={() => setActivePage("position")}><span className="icon">🎓</span>Chức vụ</a>
+              <a className={`nav-item ${activePage === "employee" ? "active" : ""}`} 
+    onClick={() => setActivePage("employee")}><span className="icon">👥</span>Nhân viên</a>
               <a  className={`nav-item ${activePage === "attendance" ? "active" : ""}`} 
     onClick={() => setActivePage("attendance")}><span className="icon">⏱️</span>Chấm công</a>
               <a className={`nav-item ${activePage === "salary-report" ? "active" : ""}`} 
@@ -183,7 +189,18 @@ const DashboardChart = () => {
       </div>
     </>
   )}
- 
+
+          {activePage === "department" && (
+            <ListPhongBan />
+          )}
+
+          {activePage === "position" && (
+            <ListChucVu />
+          )}
+
+          {activePage === "employee" && (
+            <ListNhanVien />
+          )}
 
            {activePage === "attendance" && (
     <div className="content">
@@ -436,8 +453,6 @@ const DashboardChart = () => {
           Chưa có tài khoản? <a href="#">Đăng ký ngay</a>
         </p>
       </div>
-    </div>
-  );
     </div>
   );
 }
