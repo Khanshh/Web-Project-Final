@@ -142,7 +142,7 @@ const ListNhanVien = () => {
 
   return (
     <div className="content">
-      <div className="content_title">
+      <div className="content_title nhanvien-layout">
         <div className="content_title_1">
           <h4> Quản lý Nhân viên</h4>
           <p>Quản lý thông tin chi tiết nhân viên và mức lương </p>
