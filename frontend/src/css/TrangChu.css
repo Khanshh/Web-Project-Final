@@ -212,8 +212,8 @@ body{
     #4f8beb 0%,    /* bắt đầu mảng 1 */
     #0350f5 23%,   /* kết thúc mảng 1 */
     #f8f9f7 23%,   /* mảng 2 bắt đầu */
-    #f8f9f7 85%,   /* mảng 2 kết thúc */
-    rgb(246, 233, 233) 85%,  /* mảng 3 bắt đầu */
+    #f8f9f7 83%,   /* mảng 2 kết thúc */
+    rgb(246, 233, 233) 83%,  /* mảng 3 bắt đầu */
     rgb(246, 233, 233) 100%  /* mảng 3 kết thúc */
   );
   color:#f0e8e8;
@@ -226,8 +226,8 @@ body{
 .divido {
   height: 0.5px; /* độ dày */
   background-color: rgba(255,255,255,0.3); /* màu nhẹ */
-  margin-top: 15px;
-  margin-bottom: 5px; /* khoảng cách trên dưới */
+  margin-top: 17px;
+  margin-bottom: -0.2cm; /* khoảng cách trên dưới */
   width: 115%; /* full width */
 }
 
@@ -248,9 +248,7 @@ body{
   align-items:center;
   gap: 12px;
   margin:0;
-  padding: 14px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius:12px;
+  padding: 0px;
   transition:all 0.3s ease;
 }
 .profile:hover{
@@ -263,8 +261,8 @@ body{
   box-shadow:0 4px 12px rgba(255,153,0,0.3);
 }
 .profile-txt{flex:1}
-.profile-name{font-weight:600;font-size:15px;color:#1a1a1a}
-.profile-handle{font-size:12px;color:rgba(0,0,0,0.6);margin-top:2px}
+.profile-name{font-weight:600;font-size:15px;color:#e9e7e7}
+.profile-handle{font-size:12px;color:rgba(255, 255, 255, 0.6);margin-top:2px}
 .role-chip{
   font-size:11px;padding:6px 10px;border-radius:10px;background:linear-gradient(135deg, rgba(73, 153, 44, 0.9), rgba(59, 130, 35, 0.9));color:#ffffff;font-weight:700;
   box-shadow:0 2px 8px rgba(73, 153, 44, 0.3);
