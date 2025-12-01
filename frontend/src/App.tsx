@@ -1,11 +1,16 @@
 import { useState } from "react";
 import "./css/App.css";
 import "./css/TrangChu.css";
+import "./css/User.css";
 import { useEffect, useRef } from "react";
 import Chart from "chart.js/auto";
 import ListPhongBan from "./pages/PhongBan";
 import ListChucVu from "./pages/ChucVu";
 import ListNhanVien from "./pages/NhanVien";
+import DangKy from "./components/DangKi";
+import User from "./pages/user";  // U viết hoa
+
+
 
 
 function App() {
@@ -14,22 +19,39 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [activePage, setActivePage] = useState("dashboard");
   const [reportType, setReportType] = useState("day");
+  const [showRegister, setShowRegister] = useState(false);
+
 
   // Tài khoản mẫu có sẵn
-  const sampleAccount = {
+  const sampleAdmin = {
     username: "admin",
     password: "123456",
   };
+  // 3 tài khoản user mẫu
+const sampleUsers = [
+  { username: "user1", password: "123" },
+  { username: "user2", password: "456" },
+  { username: "user3", password: "789" },
+];
+const handleSubmit = (e: React.FormEvent) => {
+  e.preventDefault();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (username === sampleAccount.username && password === sampleAccount.password) {
+  if (username === sampleAdmin.username && password === sampleAdmin.password) {
+    setLoggedIn(true);
+    setActivePage("admin"); // admin dashboard
+  } else {
+    const matchedUser = sampleUsers.find(
+      (u) => u.username === username && u.password === password
+    );
+    if (matchedUser) {
       setLoggedIn(true);
+      setActivePage("user"); // vào trang user trắng
     } else {
       alert("❌ Sai tên đăng nhập hoặc mật khẩu!");
     }
-  };
+  }
+};
+
 
 const DashboardChart = () => {
   const chartRef = useRef<HTMLCanvasElement>(null);
@@ -71,6 +93,20 @@ const DashboardChart = () => {
     </div>
   );
 };
+if (loggedIn && activePage === "user") {
+  return (
+    <User
+      username={username}
+      onLogout={() => {
+        setLoggedIn(false);
+        setUsername("");
+        setPassword("");
+        setActivePage("");
+      }}
+    />
+  );
+}
+
 
   // Nếu đã đăng nhập thì hiển thị trang chính
   if (loggedIn) {
@@ -121,6 +157,9 @@ const DashboardChart = () => {
         </aside>
 
         <main className="main">
+          {activePage === "register" && (
+  <DangKy onBack={() => setActivePage("dashboard")} />
+)}
           
 
            {activePage === "dashboard" && (
@@ -405,17 +444,20 @@ const DashboardChart = () => {
     );
     
   }
+   if (showRegister) {
+    return <DangKy onBack={() => setShowRegister(false)} />;
+  }
 
+  // Giao diện đăng nhập chính
   return (
     <div className="page">
-      {/* ==== PHẦN HEADER TRÊN CÙNG ==== */}
       <div className="top-header">
         <div className="logo">
           <img src="/vite.svg" alt="Logo" />
         </div>
         <h1>Hệ thống Quản lý Nhân viên</h1>
         <p>Giải pháp quản lý nhân sự và tính lương hiện đại</p>
-        </div>
+      </div>
 
       {/* ==== FORM ĐĂNG NHẬP ==== */}
       <div className="login-box">
@@ -450,7 +492,10 @@ const DashboardChart = () => {
         </form>
 
         <p className="register">
-          Chưa có tài khoản? <a href="#">Đăng ký ngay</a>
+          Chưa có tài khoản?{" "}
+          <span className="reg-link" onClick={() => setShowRegister(true)}>
+            Đăng ký ngay
+          </span>
         </p>
       </div>
     </div>
