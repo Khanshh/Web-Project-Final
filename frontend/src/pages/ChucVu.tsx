@@ -80,117 +80,118 @@ const ListChucVu = () => {
   };
 
   return (
-    <div className="content">
-      <div className="content_title">
-        <div className="content_title_1">
-          <h4> Quản Lý Chức Vụ </h4>
-          <p> Quản lý danh mục các chức vụ trong đơn vị </p>
+    <div className="content_container_cv">
+      <div className="container_cv">
+        <div className="content_title">
+          <div className="content_title_1">
+            <h4> Quản Lý Chức Vụ </h4>
+            <p> Quản lý danh mục các chức vụ trong đơn vị </p>
+          </div>
+          <div className="content_title_cv">
+            <button onClick={() => setshowForm(true)}>+ Thêm chức vụ</button>
+          </div>
         </div>
-        <div className="content_title_cv">
-          <button onClick={() => setshowForm(true)}>+ Thêm chức vụ</button>
-        </div>
-      </div>
 
-      <div className="content_main">
-        <div className="content_main_table">
-          <table>
-            <thead>
-              <tr>
-                <th>Mã chức vụ</th>
-                <th>Tên chức vụ</th>
-                <th>Thao tác</th>
-              </tr>
-            </thead>
-            <tbody>
-              {chucVu.map((item) => (
-                <tr key={item.ma_chuc_vu}>
-                  <td>{item.ma_chuc_vu}</td>
-                  <td>{item.ten_chuc_vu}</td>
-                  <td>
-                    <div className="buttons_group">
-                      <button className="button_edit" onClick={() => {setformUpdate(true); setmaCVCU(item.ma_chuc_vu)}}> 🖋️ </button>
-                      <button className="button_delete" onClick={() => handleDeleteChucVu(item.ma_chuc_vu)}> 🗑️ </button>
-                    </div>
-                  </td>
+        <div className="content_main">
+          <div className="content_main_table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Mã chức vụ</th>
+                  <th>Tên chức vụ</th>
+                  <th>Thao tác</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {chucVu.map((item) => (
+                  <tr key={item.ma_chuc_vu}>
+                    <td>{item.ma_chuc_vu}</td>
+                    <td>{item.ten_chuc_vu}</td>
+                    <td>
+                      <div className="buttons_group">
+                        <button className="button_edit" onClick={() => {setformUpdate(true); setmaCVCU(item.ma_chuc_vu)}}> 🖋️ </button>
+                        <button className="button_delete" onClick={() => handleDeleteChucVu(item.ma_chuc_vu)}> 🗑️ </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
+
+
+        {showForm && (
+          <div className="form_overlay" onClick={() => setshowForm(false)}>
+            <div className="form_container" onClick={(e) => e.stopPropagation()}>
+              <div>
+                <h4>Thêm Chức Vụ Mới</h4>
+                <p>Nhập thông tin chức vụ mới</p>
+              </div>
+              <div className="form_input">
+                <label>Mã chức vụ:</label>
+                <input
+                  type="text"
+                  value={maCV}
+                  onChange={(e) => setmaCV(e.target.value)}
+                />
+              </div>
+              <div className="form_input">
+                <label>Tên chức vụ:</label>
+                <input
+                  type="text"
+                  value={tenCV}
+                  onChange={(e) => settenCV(e.target.value)}
+                />
+              </div>
+              <div className="form_buttons_cv">
+                <div className="button_add">
+                  <button onClick={handleAddChucVu}> Thêm mới </button>
+                </div>
+                <div className="button_cancel">
+                  <button onClick={() => setshowForm(false)}> Hủy </button>
+                </div>
+              </div>  
+            </div>
+          </div>
+        )}
+
+
+        {formUpdate && (
+          <div className="form_overlay" onClick={() => setformUpdate(false)}>
+            <div className="form_container" onClick={(e) => e.stopPropagation()}>
+              <div>
+                <h4>Cập Nhật Chức Vụ</h4>
+                <p>Cập nhật thông tin chức vụ</p>
+              </div>
+              <div className="form_input">
+                <label>Mã chức vụ mới:</label>
+                <input
+                  type="text"
+                  value={maCVMoi}
+                  onChange={(e) => setmaCVMoi(e.target.value)}
+                />
+              </div>
+              <div className="form_input">
+                <label>Tên chức vụ mới:</label>
+                <input
+                  type="text"
+                  value={tenCVMoi}
+                  onChange={(e) => settenCVMoi(e.target.value)}
+                />
+              </div>
+              <div className="form_buttons_cv">
+                <div className="button_add">
+                  <button onClick={() =>handleUpdateChucVu(maCVCU)}> Cập nhật </button>
+                </div>
+                <div className="button_cancel">
+                  <button onClick={() => setformUpdate(false)}> Hủy </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-
-
-      {showForm && (
-        <div className="form_overlay" onClick={() => setshowForm(false)}>
-          <div className="form_container" onClick={(e) => e.stopPropagation()}>
-            <div>
-              <h4>Thêm Chức Vụ Mới</h4>
-              <p>Nhập thông tin chức vụ mới</p>
-            </div>
-            <div className="form_input">
-              <label>Mã chức vụ:</label>
-              <input
-                type="text"
-                value={maCV}
-                onChange={(e) => setmaCV(e.target.value)}
-              />
-            </div>
-            <div className="form_input">
-              <label>Tên chức vụ:</label>
-              <input
-                type="text"
-                value={tenCV}
-                onChange={(e) => settenCV(e.target.value)}
-              />
-            </div>
-            <div className="form_buttons_cv">
-              <div className="button_add">
-                <button onClick={handleAddChucVu}> Thêm mới </button>
-              </div>
-              <div className="button_cancel">
-                <button onClick={() => setshowForm(false)}> Hủy </button>
-              </div>
-            </div>  
-          </div>
-        </div>
-      )}
-
-
-      {formUpdate && (
-        <div className="form_overlay" onClick={() => setformUpdate(false)}>
-          <div className="form_container" onClick={(e) => e.stopPropagation()}>
-            <div>
-              <h4>Cập Nhật Chức Vụ</h4>
-              <p>Cập nhật thông tin chức vụ</p>
-            </div>
-            <div className="form_input">
-              <label>Mã chức vụ mới:</label>
-              <input
-                type="text"
-                value={maCVMoi}
-                onChange={(e) => setmaCVMoi(e.target.value)}
-              />
-            </div>
-            <div className="form_input">
-              <label>Tên chức vụ mới:</label>
-              <input
-                type="text"
-                value={tenCVMoi}
-                onChange={(e) => settenCVMoi(e.target.value)}
-              />
-            </div>
-            <div className="form_buttons_cv">
-              <div className="button_add">
-                <button onClick={() =>handleUpdateChucVu(maCVCU)}> Cập nhật </button>
-              </div>
-              <div className="button_cancel">
-                <button onClick={() => setformUpdate(false)}> Hủy </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
     </div>        
   );
 };

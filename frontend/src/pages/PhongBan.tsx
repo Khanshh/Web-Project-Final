@@ -104,167 +104,170 @@ const ListPhongBan = () => {
   })
 
   return (
-    <div className="content">
-      <div className="content_title">
-        <div className="content_title_1">
-          <h4> Quản lý Phòng ban</h4>
-          <p> Quản lý thông tin các phòng ban trong đơn vị </p>
+    <div className="content_container_pb">
+      <div className="content_pb">
+        <div className="content_title">
+          <div className="content_title_1_pb">
+            <h4> Quản lý Phòng ban</h4>
+            <p> Quản lý thông tin các phòng ban trong đơn vị </p>
+          </div>
+          <div className="content_title_2_pb">
+            <div className="searchbox_pb">
+              <input type="text"
+                      placeholder="Tìm mã hoặc tên phòng ..."
+                      value={searchBox}
+                      onChange={(e) => setSearchBox(e.target.value)}
+              />
+            </div>
+            <div className="content_title_pb">
+              <button onClick={() => setshowForm(true)}>+ Thêm phòng ban</button>
+            </div>
+          </div>
         </div>
-        <div className="searchbox_pb">
-          <input type="text"
-                  placeholder="Tìm mã hoặc tên phòng ..."
-                  value={searchBox}
-                  onChange={(e) => setSearchBox(e.target.value)}
-          />
-        </div>
-        <div className="content_title_pb">
-          <button onClick={() => setshowForm(true)}>+ Thêm phòng ban</button>
-        </div>
-      </div>
 
-      <div className="content_main">
-        <div className="content_main_table">
-          <table>
-            <thead>
-              <tr>
-                <th>Mã phòng</th>
-                <th>Tên phòng</th>
-                <th>Năm thành lập</th>
-                <th>Trạng thái</th>
-                <th>Thao tác</th>
-              </tr>
-            </thead>
-            <tbody>
-              {handleSearch.map((item) => (
-                <tr key={item.ma_phong}>
-                  <td>{item.ma_phong}</td>
-                  <td>{item.ten_phong}</td>
-                  <td>{item.nam_thanh_lap}</td>
-                  <td>{item.trang_thai}</td>
-                  <td>
-                    <div className="buttons_group">
-                      <button className="button_edit" onClick={() => {setformUpdate(true); setmaPBCu(item.ma_phong)}}> 🖋️ </button>
-                      <button className="button_delete" onClick={() => handleDeletePhongBan(item.ma_phong)}> 🗑️ </button>
-                    </div>
-                  </td>
+        <div className="content_main">
+          <div className="content_main_table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Mã phòng</th>
+                  <th>Tên phòng</th>
+                  <th>Năm thành lập</th>
+                  <th>Trạng thái</th>
+                  <th>Thao tác</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {handleSearch.map((item) => (
+                  <tr key={item.ma_phong}>
+                    <td>{item.ma_phong}</td>
+                    <td>{item.ten_phong}</td>
+                    <td>{item.nam_thanh_lap}</td>
+                    <td>{item.trang_thai}</td>
+                    <td>
+                      <div className="buttons_group">
+                        <button className="button_edit" onClick={() => {setformUpdate(true); setmaPBCu(item.ma_phong)}}> 🖋️ </button>
+                        <button className="button_delete" onClick={() => handleDeletePhongBan(item.ma_phong)}> 🗑️ </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
+
+
+
+        {showForm && (
+          <div className="form_overlay" onClick={() => setshowForm(false)}>
+            <div className="form_container" onClick={(e) => e.stopPropagation()}>
+              <div>
+                <h4>Thêm phòng ban mới</h4>
+                <p>Nhập thông tin phòng ban mới</p>
+              </div>
+              <div className="form_input">
+                <label>Mã phòng (3 ký tự):</label>
+                <input
+                  type="text"
+                  value={maPB}
+                  onChange={(e) => setmaPB(e.target.value)}
+                />
+              </div>
+              <div className="form_input">
+                <label>Tên phòng:</label>
+                <input
+                  type="text"
+                  value={tenPB}
+                  onChange={(e) => settenPB(e.target.value)}
+                />
+              </div>
+              <div className="form_input">
+                <label>Năm thành lập:</label>
+                <input
+                  type="number"
+                  value={namThanhLap}
+                  onChange={(e) => setnamThanhLap(e.target.value)}
+                />
+              </div>
+              <div className="form_input">
+                <label>Trạng thái:</label>
+                <select
+                  value={trangThai}
+                  onChange={(e) => settrangThai(e.target.value)}
+                  > 
+                    <option value="">--- Chọn ---</option>
+                    <option value="Hoạt động">Hoạt động</option>
+                    <option value="Ngừng hoạt động">Ngừng hoạt động</option>
+                </select>
+              </div>
+              <div className="form_buttons_pb">
+                <div className="button_add">
+                  <button onClick={handleAddPhongBan}> Thêm mới </button>
+                </div>
+                <div className="button_cancel">
+                  <button onClick={() => setshowForm(false)}> Hủy </button>
+                </div>
+              </div>  
+            </div>
+          </div>
+        )}
+
+
+        {formUpdate && (
+          <div className="form_overlay" onClick={() => setformUpdate(false)}>
+            <div className="form_container" onClick={(e) => e.stopPropagation()}>
+              <div>
+                <h4>Sửa phòng ban</h4>
+                <p>Cập nhật thông tin phòng ban</p>
+              </div>
+              <div className="form_input">
+                <label>Mã phòng:</label>
+                <input
+                  type="text"
+                  value={maPBMoi}
+                  onChange={(e) => setmaPBMoi(e.target.value)}
+                />
+              </div>
+              <div className="form_input">
+                <label>Tên phòng:</label>
+                <input
+                  type="text"
+                  value={tenPBMoi}
+                  onChange={(e) => settenPBMoi(e.target.value)}
+                />
+              </div>
+              <div className="form_input">
+                <label>Năm thành lập:</label>
+                <input
+                  type="text"
+                  value={namThanhLapMoi}
+                  onChange={(e) => setnamThanhLapMoi(e.target.value)}
+                />
+              </div>
+              <div className="form_input">
+                <label>Trạng thái:</label>
+                <select
+                  value={trangThai}
+                  onChange={(e) => settrangThai(e.target.value)}
+                  >
+                    <option value="">--- Chọn ---</option>
+                    <option value="Hoạt động">Hoạt động</option>
+                    <option value="Ngừng hoạt động">Ngừng hoạt động</option>
+                </select>
+              </div>
+              <div className="form_buttons_pb">
+                <div className="button_add">
+                  <button onClick={() =>handleUpdatePhongBan(maPBCu)}> Cập nhật </button>
+                </div>
+                <div className="button_cancel">
+                  <button onClick={() => setformUpdate(false)}> Hủy </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-
-
-
-      {showForm && (
-        <div className="form_overlay" onClick={() => setshowForm(false)}>
-          <div className="form_container" onClick={(e) => e.stopPropagation()}>
-            <div>
-              <h4>Thêm phòng ban mới</h4>
-              <p>Nhập thông tin phòng ban mới</p>
-            </div>
-            <div className="form_input">
-              <label>Mã phòng (3 ký tự):</label>
-              <input
-                type="text"
-                value={maPB}
-                onChange={(e) => setmaPB(e.target.value)}
-              />
-            </div>
-            <div className="form_input">
-              <label>Tên phòng:</label>
-              <input
-                type="text"
-                value={tenPB}
-                onChange={(e) => settenPB(e.target.value)}
-              />
-            </div>
-            <div className="form_input">
-              <label>Năm thành lập:</label>
-              <input
-                type="number"
-                value={namThanhLap}
-                onChange={(e) => setnamThanhLap(e.target.value)}
-              />
-            </div>
-            <div className="form_input">
-              <label>Trạng thái:</label>
-              <select
-                value={trangThai}
-                onChange={(e) => settrangThai(e.target.value)}
-                > 
-                  <option value="">--- Chọn ---</option>
-                  <option value="Hoạt động">Hoạt động</option>
-                  <option value="Ngừng hoạt động">Ngừng hoạt động</option>
-              </select>
-            </div>
-            <div className="form_buttons_pb">
-              <div className="button_add">
-                <button onClick={handleAddPhongBan}> Thêm mới </button>
-              </div>
-              <div className="button_cancel">
-                <button onClick={() => setshowForm(false)}> Hủy </button>
-              </div>
-            </div>  
-          </div>
-        </div>
-      )}
-
-
-      {formUpdate && (
-        <div className="form_overlay" onClick={() => setformUpdate(false)}>
-          <div className="form_container" onClick={(e) => e.stopPropagation()}>
-            <div>
-              <h4>Sửa phòng ban</h4>
-              <p>Cập nhật thông tin phòng ban</p>
-            </div>
-            <div className="form_input">
-              <label>Mã phòng:</label>
-              <input
-                type="text"
-                value={maPBMoi}
-                onChange={(e) => setmaPBMoi(e.target.value)}
-              />
-            </div>
-            <div className="form_input">
-              <label>Tên phòng:</label>
-              <input
-                type="text"
-                value={tenPBMoi}
-                onChange={(e) => settenPBMoi(e.target.value)}
-              />
-            </div>
-            <div className="form_input">
-              <label>Năm thành lập:</label>
-              <input
-                type="text"
-                value={namThanhLapMoi}
-                onChange={(e) => setnamThanhLapMoi(e.target.value)}
-              />
-            </div>
-            <div className="form_input">
-              <label>Trạng thái:</label>
-              <select
-                value={trangThai}
-                onChange={(e) => settrangThai(e.target.value)}
-                >
-                  <option value="">--- Chọn ---</option>
-                  <option value="Hoạt động">Hoạt động</option>
-                  <option value="Ngừng hoạt động">Ngừng hoạt động</option>
-              </select>
-            </div>
-            <div className="form_buttons_pb">
-              <div className="button_add">
-                <button onClick={() =>handleUpdatePhongBan(maPBCu)}> Cập nhật </button>
-              </div>
-              <div className="button_cancel">
-                <button onClick={() => setformUpdate(false)}> Hủy </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
     </div>  
   );
 };
