@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "../css/DangKy.css";
+import axios from "axios";
 
 export default function DangKy({ onBack }: { onBack: () => void }) {
   const [fullName, setFullName] = useState("");
@@ -7,7 +8,7 @@ export default function DangKy({ onBack }: { onBack: () => void }) {
   const [pass, setPass] = useState("");
   const [confirm, setConfirm] = useState("");
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!fullName || !user || !pass || !confirm) {
       alert("⚠ Vui lòng nhập đầy đủ thông tin!");
@@ -17,13 +18,23 @@ export default function DangKy({ onBack }: { onBack: () => void }) {
       alert("❌ Mật khẩu không khớp!");
       return;
     }
-    alert("✅ Đăng ký thành công! Vui lòng đăng nhập lại.");
-    onBack();
+
+    try {
+      await axios.post("http://localhost:5000/api/auth/register", {
+        ho_ten: fullName,
+        username: user,
+        password: pass
+      });
+      alert("✅ Đăng ký thành công! Vui lòng đăng nhập lại.");
+      onBack();
+    } catch (error) {
+      alert("❌ Đăng ký thất bại! Tên đăng nhập có thể đã tồn tại.");
+    }
   };
 
   return (
     <div className="dk-page">
-    < div className="dk-box">
+      < div className="dk-box">
 
         <div className="dk-header">
           <h2>Đăng ký tài khoản</h2>

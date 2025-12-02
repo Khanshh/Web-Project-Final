@@ -1,23 +1,17 @@
-from pydantic_settings import BaseSettings
-from typing import List
+import os
 
-class Settings(BaseSettings):
-    # Server
-    PORT: int = 5000
-    DEBUG: bool = True
-    
-    # Database
-    DATABASE_URL: str = "sqlite:///./test.db"
-    
-    # Security
-    SECRET_KEY: str
-    ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-    
-    # CORS
-    FRONTEND_URL: str = "http://localhost:5173"
-    
-    class Config:
-        env_file = ".env"
+
+class Settings:
+    """Static config with env overrides for deployment flexibility."""
+
+    FRONTEND_URL: str = os.getenv("FRONTEND_URL", "http://localhost:5173")
+    PORT: int = int(os.getenv("PORT", 5000))
+    DEBUG: bool = os.getenv("DEBUG", "true").lower() == "true"
+    DATABASE_URL: str = os.getenv(
+        "DATABASE_URL",
+        "postgresql+asyncpg://postgres:postgres@localhost:5433/hrm_db",
+    )
+
 
 settings = Settings()
+

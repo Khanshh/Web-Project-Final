@@ -1,12 +1,65 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ListChamCongNV from "./ChamCong_nv";
 import ListTaiKhoanNV from "./ThongTin_nv";
 import BaoCaoLuongNV from "./BaoCaoLuong_nv";
 import "../css/User.css";
+import axios from "axios";
 
 
 export default function User({ username, onLogout }: { username: string, onLogout: () => void }) {
   const [renderPage, setRenderPage] = useState("trangchu");
+  const [totalHours, setTotalHours] = useState(0);
+  const [workDays, setWorkDays] = useState(0);
+
+  // Placeholder for user info since we don't have full context
+  const [userInfo, setUserInfo] = useState<any>({
+    ho_ten: "Nguyễn Văn A",
+    department: "Phát triển",
+    role: "Nhân viên"
+  });
+
+  useEffect(() => {
+    fetchUserData();
+    fetchAttendanceStats();
+  }, []);
+
+  const fetchUserData = async () => {
+    try {
+      // Assuming username is passed correctly
+      const res = await axios.get(`http://localhost:5000/api/taikhoan/${username || "admin"}`);
+      setUserInfo({
+        ho_ten: res.data.name,
+        department: res.data.department,
+        role: res.data.role
+      });
+    } catch (error) {
+      console.error("Error fetching user data", error);
+    }
+  };
+
+  const fetchAttendanceStats = async () => {
+    try {
+      const maNV = "NV001"; // Placeholder
+      const res = await axios.get(`http://localhost:5000/api/chamcong/my-attendance/${maNV}`);
+      const data = res.data;
+      setWorkDays(data.length);
+
+      // Simple calculation: assume 8h per full day if checkout exists, else 0
+      // Real calculation should use checkin/checkout diff
+      let hours = 0;
+      data.forEach((d: any) => {
+        if (d.checkin && d.checkout) {
+          // Parse time strings HH:MM:SS
+          // For simplicity, just adding 8h per completed day
+          hours += 8;
+        }
+      });
+      setTotalHours(hours);
+
+    } catch (error) {
+      console.error("Error fetching attendance stats", error);
+    }
+  };
 
   return (
     <div className="user-page">
@@ -18,34 +71,36 @@ export default function User({ username, onLogout }: { username: string, onLogou
         </div>
         <div className="user-info-card">
           <div className="user-info">
-            <div className="avatar-sidebar">NG</div>
+            <div className="avatar-sidebar">
+              {userInfo.ho_ten.split(" ").map((n: string) => n[0]).join("")}
+            </div>
             <div className="user-details-group">
-              <div className="name">Nguyễn Văn A</div>
-              <div className="employee-id">Mã NV: 12345</div>
+              <div className="name">{userInfo.ho_ten}</div>
+              <div className="employee-id">Mã NV: ...</div>
             </div>
           </div>
 
           <div className="user-details">
             <div className="detail-item">
               <span className="label">Phòng ban:</span>
-              <span className="value">Phát triển</span>
+              <span className="value">{userInfo.department}</span>
             </div>
             <div className="detail-item">
               <span className="label">Chức vụ:</span>
-              <span className="value">Nhân viên</span>
+              <span className="value">{userInfo.role}</span>
             </div>
           </div>
         </div>
 
         <nav className="user-nav">
           <a className={renderPage === "trangchu" ? "active" : ""}
-    onClick={() => setRenderPage("trangchu")}>🏠 Trang chủ</a>
+            onClick={() => setRenderPage("trangchu")}>🏠 Trang chủ</a>
           <a className={renderPage === "baocaoluong" ? "active" : ""}
-    onClick={() => setRenderPage("baocaoluong")}>💲 Báo cáo lương</a>
+            onClick={() => setRenderPage("baocaoluong")}>💲 Báo cáo lương</a>
           <a className={renderPage === "chamcong" ? "active" : ""}
-    onClick={() => setRenderPage("chamcong")}>⏱️ Chấm công</a>
+            onClick={() => setRenderPage("chamcong")}>⏱️ Chấm công</a>
           <a className={renderPage === "taikhoan" ? "active" : ""}
-    onClick={() => setRenderPage("taikhoan")}>👥 Tài khoản</a>
+            onClick={() => setRenderPage("taikhoan")}>👥 Tài khoản</a>
         </nav>
         <button className="logout-btn" onClick={onLogout}>⏎ Đăng xuất</button>
         <div className="copyright">© 2025 Hệ thống Quản lý Nhân viên</div>
@@ -60,12 +115,14 @@ export default function User({ username, onLogout }: { username: string, onLogou
             <div className="user-card">
               <div className="user-header">
                 <div>
-                  <h2>Nguyễn Văn An</h2>
-                  <p>Đơn vị: Phát triển</p>
-                  <p>Vai trò: Nhân viên</p>
+                  <h2>{userInfo.ho_ten}</h2>
+                  <p>Đơn vị: {userInfo.department}</p>
+                  <p>Vai trò: {userInfo.role}</p>
                   <p><i className="icon-company"></i> A.ISOFT</p>
                 </div>
-                <div className="user-avatar-circle">NA</div>
+                <div className="user-avatar-circle">
+                  {userInfo.ho_ten.split(" ").map((n: string) => n[0]).join("")}
+                </div>
               </div>
             </div>
 
@@ -75,11 +132,11 @@ export default function User({ username, onLogout }: { username: string, onLogou
                 <h3 className="bao-cao-header">Thống kê tháng</h3>
                 <div className="stat-item">
                   <span>Số buổi làm việc</span>
-                  <span>52</span>
+                  <span>{workDays}</span>
                 </div>
                 <div className="stat-item">
                   <span>Tổng giờ làm việc</span>
-                  <span>209.9 giờ</span>
+                  <span>{totalHours} giờ</span>
                 </div>
                 <div className="stat-item">
                   <span>Lương cơ bản</span>
@@ -116,7 +173,7 @@ export default function User({ username, onLogout }: { username: string, onLogou
 
                 <div>
                   <h3>Giờ đã làm</h3>
-                  <p className="value">209.9h</p>
+                  <p className="value">{totalHours}h</p>
                 </div>
               </div>
 
@@ -131,13 +188,13 @@ export default function User({ username, onLogout }: { username: string, onLogou
 
                 <div>
                   <h3>Giờ làm thêm</h3>
-                  <p className="value">169.9h</p>
+                  <p className="value">0h</p>
                 </div>
               </div>
             </div>
           </>
         )}
-        
+
         {renderPage === "chamcong" && <ListChamCongNV />}
         {renderPage === "baocaoluong" && <BaoCaoLuongNV />}
         {renderPage === "taikhoan" && <ListTaiKhoanNV />}
