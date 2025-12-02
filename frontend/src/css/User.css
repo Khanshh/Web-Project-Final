@@ -229,13 +229,7 @@
     min-height: 200px;
     margin: 0 auto;
     margin-top:1cm;
-     background: linear-gradient(
-        to bottom,
-        #eff7ff 0%,
-        #eff7ff 16%,
-        white 10%,
-        white 100%
-    );
+
 
 }
 

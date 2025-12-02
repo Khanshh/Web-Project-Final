@@ -205,7 +205,7 @@ body{
 
 /* ========== SIDEBAR ========== */
 .sidebar{
-  width:260px;
+  width:300px;
   min-width:260px;
     /* 3 mảng, dùng linear-gradient cho mảng 1, màu thẳng cho mảng 2 và 3 */
     background: linear-gradient(
@@ -227,8 +227,8 @@ body{
 .divido {
   height: 0.5px; /* độ dày */
   background-color: rgba(255,255,255,0.3); /* màu nhẹ */
-  margin-top: 17px;
-  margin-bottom: -0.2cm; /* khoảng cách trên dưới */
+  margin-top: 10px;
+  margin-bottom: -0.8cm; /* khoảng cách trên dưới */
   width: 115%; /* full width */
 }
 
@@ -238,6 +238,7 @@ body{
   gap:12px;
   align-items:center;
   margin-bottom:20px;
+  margin-top:-2.5%;
 }
 
 .brand-title{font-weight:700;font-size:22px;color:#ffffff;text-shadow:0 2px 4px rgba(0,0,0,0.1)}
@@ -248,7 +249,7 @@ body{
   display:flex; 
   align-items:center;
   gap: 12px;
-  margin:0;
+  margin-top:-0.2cm;
   padding: 0px;
   transition:all 0.3s ease;
 }
@@ -262,7 +263,7 @@ body{
   box-shadow:0 4px 12px rgba(255,153,0,0.3);
 }
 .profile-txt{flex:1}
-.profile-name{font-weight:600;font-size:15px;color:#e9e7e7}
+.profile-name{font-weight:600;font-size:15px;color:#e9e7e7; }
 .profile-handle{font-size:12px;color:rgba(255, 255, 255, 0.6);margin-top:2px}
 .role-chip{
   font-size:11px;padding:6px 10px;border-radius:10px;background:linear-gradient(135deg, rgba(73, 153, 44, 0.9), rgba(59, 130, 35, 0.9));color:#ffffff;font-weight:700;

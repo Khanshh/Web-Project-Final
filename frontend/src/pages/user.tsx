@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import ListChamCongNV from "./ChamCong_NV";
-import ListTaiKhoanNV from "./ThongTin_NV";
+import ListChamCongNV from "./ChamCong_nv";
+import ListTaiKhoanNV from "./ThongTin_nv";
+import BaoCaoLuongNV from "./BaoCaoLuong_nv";
 import "../css/User.css";
 
 
@@ -40,13 +41,11 @@ export default function User({ username, onLogout }: { username: string, onLogou
           <a className={renderPage === "trangchu" ? "active" : ""}
     onClick={() => setRenderPage("trangchu")}>🏠 Trang chủ</a>
           <a className={renderPage === "baocaoluong" ? "active" : ""}
-    onClick={() => setRenderPage("baocaoluong")}>Báo cáo lương</a>
+    onClick={() => setRenderPage("baocaoluong")}>💲 Báo cáo lương</a>
           <a className={renderPage === "chamcong" ? "active" : ""}
-    onClick={() => setRenderPage("chamcong")}>Chấm công</a>
-          <a className={renderPage === "thongbao" ? "active" : ""}
-    onClick={() => setRenderPage("thongbao")}>Thông báo</a>
+    onClick={() => setRenderPage("chamcong")}>⏱️ Chấm công</a>
           <a className={renderPage === "taikhoan" ? "active" : ""}
-    onClick={() => setRenderPage("taikhoan")}>Tài khoản</a>
+    onClick={() => setRenderPage("taikhoan")}>👥 Tài khoản</a>
         </nav>
         <button className="logout-btn" onClick={onLogout}>⏎ Đăng xuất</button>
         <div className="copyright">© 2025 Hệ thống Quản lý Nhân viên</div>
@@ -73,7 +72,7 @@ export default function User({ username, onLogout }: { username: string, onLogou
             {/* ==== Phần 2: Thống kê tháng ==== */}
             <div className="user-cardh1">
               <div className="stats-section">
-                <h3>Thống kê tháng</h3>
+                <h3 className="bao-cao-header">Thống kê tháng</h3>
                 <div className="stat-item">
                   <span>Số buổi làm việc</span>
                   <span>52</span>
@@ -98,7 +97,7 @@ export default function User({ username, onLogout }: { username: string, onLogou
             </div>
             <div className="user-cardh1">
               <div className="stats-section">
-                <h3>Kết quả trong ngày</h3>
+                <h3 className="bao-cao-header" >Kết quả trong ngày</h3>
                 <div className="stats-section1" style={{ textAlign: "center", width: "100%" }}>
                   <p className="no-record">Không có bản ghi chấm công nào hôm nay</p>
                 </div>
@@ -140,6 +139,7 @@ export default function User({ username, onLogout }: { username: string, onLogou
         )}
         
         {renderPage === "chamcong" && <ListChamCongNV />}
+        {renderPage === "baocaoluong" && <BaoCaoLuongNV />}
         {renderPage === "taikhoan" && <ListTaiKhoanNV />}
       </main>
 
