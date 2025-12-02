@@ -1,7 +1,17 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
-from app.routes import test_routes
+from app.db import init_db
+from app.routes import (
+    auth,
+    chamcong,
+    chucvu,
+    dashboard,
+    luong,
+    nhanvien,
+    phongban,
+    taikhoan,
+)
 
 # Khởi tạo FastAPI app
 app = FastAPI(
@@ -20,8 +30,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include routers
-app.include_router(test_routes.router, prefix="/api", tags=["test"])
+# Startup hook
+@app.on_event("startup")
+async def on_startup():
+    await init_db()
+
+
+# Include routers expected by the frontend
+app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
+app.include_router(taikhoan.router, prefix="/api/taikhoan", tags=["TaiKhoan"])
+app.include_router(nhanvien.router, prefix="/api/nhanvien", tags=["NhanVien"])
+app.include_router(phongban.router, prefix="/api/phongban", tags=["PhongBan"])
+app.include_router(chucvu.router, prefix="/api/chucvu", tags=["ChucVu"])
+app.include_router(chamcong.router, prefix="/api/chamcong", tags=["ChamCong"])
+app.include_router(luong.router, prefix="/api/luongnhanvien", tags=["Luong"])
+app.include_router(dashboard.router, prefix="/api/dashboard", tags=["Dashboard"])
 
 # Root endpoint
 @app.get("/")
