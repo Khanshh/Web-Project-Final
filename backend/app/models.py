@@ -6,6 +6,9 @@ class NhanVienSchema(BaseModel):
     ma_phong: str = Field(...)
     ma_chuc_vu: str = Field(...)
     muc_luong_co_ban: str = Field(...)
+    # Thông tin tài khoản (tùy chọn) để tạo luôn user cho nhân viên
+    username: Optional[str] = None
+    password: Optional[str] = None
 
     class Config:
         json_schema_extra = {
@@ -13,7 +16,9 @@ class NhanVienSchema(BaseModel):
                 "ho_ten": "Nguyen Van A",
                 "ma_phong": "PB01",
                 "ma_chuc_vu": "CV01",
-                "muc_luong_co_ban": "10000000"
+                "muc_luong_co_ban": "10000000",
+                "username": "nguyenvana",
+                "password": "123456",
             }
         }
 

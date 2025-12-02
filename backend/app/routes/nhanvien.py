@@ -6,7 +6,7 @@ from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db import get_session
-from app.db_models import NhanVien
+from app.db_models import NhanVien, User
 from app.models import NhanVienSchema, UpdateNhanVienSchema
 
 router = APIRouter()
@@ -34,6 +34,15 @@ async def add_nhanvien(
 ):
     data = jsonable_encoder(nhanvien)
 
+    username = data.pop("username", None)
+    password = data.pop("password", None)
+
+    # Nếu truyền username/password thì kiểm tra trùng trước
+    if username and password:
+        existing = await session.scalar(select(User).where(User.username == username))
+        if existing:
+            raise HTTPException(status_code=400, detail="Username đã tồn tại")
+
     next_id = f"NV{uuid.uuid4().hex[:5].upper()}"
     new_nv = NhanVien(
         ma_nhan_vien=data.get("ma_nhan_vien", next_id),
@@ -43,6 +52,18 @@ async def add_nhanvien(
         muc_luong_co_ban=Decimal(data["muc_luong_co_ban"]),
     )
     session.add(new_nv)
+
+    # Nếu có thông tin tài khoản thì tạo luôn user gắn với nhân viên
+    if username and password:
+        new_user = User(
+            id=str(uuid.uuid4()),
+            username=username,
+            password=password,
+            ho_ten=new_nv.ho_ten,
+            ma_nhan_vien=new_nv.ma_nhan_vien,
+        )
+        session.add(new_user)
+
     await session.commit()
     await session.refresh(new_nv)
     return serialize_nv(new_nv)

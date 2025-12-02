@@ -83,7 +83,9 @@ const ListNhanVien = () => {
           ho_ten: hoTen,
           ma_phong: maPhong,
           ma_chuc_vu: maChucVu,
-          muc_luong_co_ban: mucLuongCoBan
+          muc_luong_co_ban: mucLuongCoBan,
+          username: user,
+          password: pass
         });
       fetchData();
       setmaNV("");
@@ -91,6 +93,8 @@ const ListNhanVien = () => {
       setmaPhong("");
       setmaChucVu("");
       setmucLuongCoBan("");
+      setUser("");
+      setPass("");
       setshowForm(false);
     } catch (error) {
       alert("Thêm nhân viên thất bại.")
