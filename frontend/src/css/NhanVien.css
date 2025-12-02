@@ -65,7 +65,7 @@
 }
 
 .showtable button {
-  background: linear-gradient(90deg, #0066ff, #0066ff);
+  background: linear-gradient(90deg, #395f99, #30abca);
   display: flex;          
   align-items: center;     
   justify-content: center; 
@@ -73,6 +73,12 @@
   height: 36px;
   justify-content: center;
   margin: 0;
+  color: #ffffff;
+}
+
+.showtable button:hover {
+  background: linear-gradient(90deg, #0066ff, #0056e0);
+  transform: translateY(-1px);
 }
 
 .content_title_nv {
@@ -84,7 +90,7 @@
 }
 
 .content_title_nv button {
-  background: linear-gradient(90deg, #0066ff, #0066ff);
+  background: linear-gradient(90deg, #395f99, #30abca);
   color: #fff;
   display: flex;          
   align-items: center;   
@@ -231,37 +237,34 @@
 }
 
 .form_container p {
-  font-size: 14px;
+  font-size: 16px;
   color: #666;
   margin-bottom: 15px;
 }
 
 
-.form_input {
-  display: flex;       /* xếp các phần tử con theo hàng ngang */
-  gap: 10px;           /* khoảng cách giữa các button */
-  margin-bottom: 15px; /* khoảng cách với các phần tử bên dưới */
+.form_input_type {
+    display: flex;
+    justify-content: center; /* căn giữa */
+    gap: 10px;
 }
 
-
-/* Tab buttons */
-.form_input button {
+.form_input_type button {
   padding: 8px 15px;
   margin-right: 10px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  background-color: #82d1f0;
-  color: #fff;
-  font-weight: bold;
+  background: #82d1f0;
+  color: #121222;
+  font-size: 16px;
   transition: 0.2s;
 }
 
-.form_input > button:hover {
-  background-color: #5bb0d8;
+.form_input_type button:hover {
+  background: #48a2cc;
 }
 
-/* Input fields */
 .form_inputs_ttnv, .form_inputs_tkdn {
   margin-top: 15px;
 }
@@ -273,17 +276,17 @@
 }
 
 .form_input label {
-  font-size: 14px;
+  font-size: 16px;
   margin-bottom: 5px;
-  color: #555;
+  color: #272222;
 }
 
 .form_input input,
 .form_input select {
   padding: 8px 10px;
-  border: 1px solid #ccc;
+  border: 1px solid #48c1d1;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 16px;
   outline: none;
   transition: 0.2s;
 }
@@ -302,32 +305,52 @@
   gap: 10px;
 }
 
-.form_buttons_nv .button_add button,
-.form_buttons_nv .button_cancel button {
-  padding: 8px 16px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
-  transition: 0.2s;
-}
 
 .form_buttons_nv .button_add button {
-  background-color: #82d1f0;
-  color: #fff;
+  background: #5bb5d8;
+  color: #181212;
+  border: none;
+  border-radius: 8px;
+  white-space: nowrap;
+  padding: 8px 0;
+  font-size: 16px;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.2s, transform 0.1s;
 }
 
+
 .form_buttons_nv .button_add button:hover {
-  background-color: #5bb0d8;
+  background: #4bbadb;
+  transform: scale(1.03);
+  color: #000000;
+}
+
+.form_buttons_nv .button_cancel {
+  border-radius: 8px;
+  border: none;
+  width: 30%;
 }
 
 .form_buttons_nv .button_cancel button {
-  background-color: #f0f0f0;
+  background: #ffffff;
   color: #333;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 16px;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.2s, transform 0.1s;
+  border: 1.5px solid #82d1f0;
 }
 
+
+
 .form_buttons_nv .button_cancel button:hover {
-  background-color: #ddd;
+  background: #b3daff;
+  transform: scale(1.03);
+  color: #7e4242;
 }
 
 /* Animation mở form */
