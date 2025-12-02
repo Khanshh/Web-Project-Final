@@ -99,7 +99,8 @@
 }
 
 .actions-button-1:hover {
-  background-color: #dbeafe;
+  background: #3b85e7;
+  color: #1e293b;
 }
 
 .actions-button-2 {
@@ -176,7 +177,7 @@
   outline: none;
 }
 
-/* === Nút thêm và hủy === */
+
 .form_buttons_nv {
   display: flex;
   justify-content: center;
@@ -188,7 +189,7 @@
 
 /* === Nút Thêm mới === */
 .form_buttons_nv .button_add button {
-  background-color: #007bff;
+  background: #2f78c7;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -202,17 +203,16 @@
 
 
 .form_buttons_nv .button_add button:hover {
-  background-color: #0063d1;
+  background: #3686e1;
   transform: scale(1.03);
 }
 
 .form_buttons_nv .button_cancel_nv {
-  border: 1.5px solid #82d1f0;
   border-radius: 8px;
 }
 
 .form_buttons_nv .button_cancel_nv button {
-  background-color: #ffffff;
+  background: #ffffff;
   color: #333;
   border: none;
   border-radius: 8px;
@@ -221,6 +221,7 @@
   cursor: pointer;
   width: 70px;
   transition: background 0.2s, transform 0.1s;
+  border: 1.5px solid #82d1f0;
 }
 
 .form_buttons_nv .button_cancel_nv button:hover {

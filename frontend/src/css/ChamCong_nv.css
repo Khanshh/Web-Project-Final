@@ -179,12 +179,13 @@
 
 .button_exitform {
   position: absolute;
-  top: 2px;     /* cách viền trên 5px, vừa đủ không che chữ */
-  right: 0px;  /* cách viền phải 10px */
+  top: 0px;  
+  right: 0px;
+  
 }
 
 .button_exitform button {
-  background: transparent;
+  background:transparent;
   font-size: 16px; 
   border: none;
   font-weight: bold;
@@ -192,7 +193,10 @@
   color: #777;
   transition: 0.2s;
   text-align: end;
+  margin: 0;
+  padding: 10px 15px;
   outline: none;
+  box-shadow: none;
 }
 
 .button_exitform button:hover {
