@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import '../css/ThongTin_nv.css';
 import axios from 'axios';
 
@@ -9,19 +9,18 @@ interface TaiKhoan {
   department: string;
   employeeId: string;
   role: string;
-};
+}
 
-const ListTaiKhoanNV: React.FC = () => {
+interface ListTaiKhoanNVProps {
+  username: string;
+}
+
+const ListTaiKhoanNV: React.FC<ListTaiKhoanNVProps> = ({ username }) => {
   const [userInfo, setUserInfo] = useState<TaiKhoan | null>(null);
-
   const [ChangePasswordForm, setChangePasswordForm] = useState(false);
   const [passwordCu, setPasswordCu] = useState("");
   const [passwordMoi, setPasswordMoi] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
-
-  // TODO: Get real username. Using "admin" or "user1" as placeholder if not available.
-  // In a real app, this comes from context/auth state.
-  const currentUsername = "admin";
 
   useEffect(() => {
     fetchData();
@@ -29,7 +28,7 @@ const ListTaiKhoanNV: React.FC = () => {
 
   const fetchData = () => {
     axios
-      .get<TaiKhoan>(`http://localhost:5000/api/taikhoan/${currentUsername}`)
+      .get<TaiKhoan>(`http://localhost:5000/api/taikhoan/${username}`)
       .then((res) => setUserInfo(res.data))
       .catch((err) => console.error("Lỗi khi lấy dữ liệu:", err));
   };
@@ -45,7 +44,7 @@ const ListTaiKhoanNV: React.FC = () => {
       return;
     }
     try {
-      await axios.put(`http://localhost:5000/api/taikhoan/${currentUsername}`, {
+      await axios.put(`http://localhost:5000/api/taikhoan/${username}`, {
         password_new: passwordMoi,
       });
       setPasswordCu("");

@@ -69,8 +69,15 @@ class ChamCong(Base):
     id = Column(String(36), primary_key=True)
     ma_nhan_vien = Column(String(10), ForeignKey("nhanvien.ma_nhan_vien"))
     ngay = Column(Date, nullable=False)
+    # Các cột cũ (giữ lại để tương thích, sẽ được fill tự động từ các buổi)
     checkin = Column(String(8), nullable=True)
     checkout = Column(String(8), nullable=True)
+
+    # Chấm công theo 2 buổi: sáng / chiều
+    checkin_sang = Column(String(8), nullable=True)
+    checkout_sang = Column(String(8), nullable=True)
+    checkin_chieu = Column(String(8), nullable=True)
+    checkout_chieu = Column(String(8), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     nhanvien = relationship("NhanVien", back_populates="chamcongs")

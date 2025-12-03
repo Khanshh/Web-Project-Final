@@ -4,7 +4,7 @@ from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db import get_session
-from app.db_models import NhanVien, User
+from app.db_models import NhanVien, User, PhongBan, ChucVu
 
 router = APIRouter()
 
@@ -24,19 +24,42 @@ async def get_user(username: str, session: AsyncSession = Depends(get_session)):
         raise HTTPException(status_code=404, detail="User not found")
 
     department = "Unknown"
+    department_name = "Unknown"
     employee_id = "Unknown"
+    chuc_vu = "Unknown"
+    chuc_vu_name = "Unknown"
+    muc_luong_co_ban = "0"
+    
     if user.ma_nhan_vien:
         nv = await session.get(NhanVien, user.ma_nhan_vien)
         if nv:
-            department = nv.ma_phong
             employee_id = nv.ma_nhan_vien
+            department = nv.ma_phong
+            muc_luong_co_ban = str(nv.muc_luong_co_ban or 0)
+            
+            # Lấy tên phòng ban
+            if nv.ma_phong:
+                pb = await session.get(PhongBan, nv.ma_phong)
+                if pb:
+                    department_name = pb.ten_phong
+            
+            # Lấy tên chức vụ
+            if nv.ma_chuc_vu:
+                cv = await session.get(ChucVu, nv.ma_chuc_vu)
+                if cv:
+                    chuc_vu = nv.ma_chuc_vu
+                    chuc_vu_name = cv.ten_chuc_vu
 
     return {
         "name": user.ho_ten,
         "email": f"{username}@example.com",
         "username": user.username,
-        "department": department,
+        "department": department_name,
+        "department_code": department,
         "employeeId": employee_id,
+        "chuc_vu": chuc_vu_name,
+        "chuc_vu_code": chuc_vu,
+        "muc_luong_co_ban": muc_luong_co_ban,
         "role": "Admin" if username == "admin" else "User",
     }
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import ListChamCongNV from "./ChamCong_nv";
 import ListTaiKhoanNV from "./ThongTin_nv";
 import BaoCaoLuongNV from "./BaoCaoLuong_nv";
@@ -6,56 +6,61 @@ import "../css/User.css";
 import axios from "axios";
 
 
-export default function User({ username, onLogout }: { username: string, onLogout: () => void }) {
+export default function User({ username, maNhanVien, onLogout }: { username: string, maNhanVien: string | null, onLogout: () => void }) {
   const [renderPage, setRenderPage] = useState("trangchu");
   const [totalHours, setTotalHours] = useState(0);
   const [workDays, setWorkDays] = useState(0);
 
-  // Placeholder for user info since we don't have full context
   const [userInfo, setUserInfo] = useState<any>({
-    ho_ten: "Nguyễn Văn A",
-    department: "Phát triển",
-    role: "Nhân viên"
+    ho_ten: "",
+    department: "",
+    role: "Nhân viên",
+    employeeId: "",
+    luong_co_ban: "0"
   });
+  const [todayAttendance, setTodayAttendance] = useState<any>(null);
 
   useEffect(() => {
     fetchUserData();
     fetchAttendanceStats();
-  }, []);
+    if (maNhanVien) {
+      fetchTodayAttendance();
+    }
+  }, [maNhanVien]);
 
   const fetchUserData = async () => {
     try {
-      // Assuming username is passed correctly
-      const res = await axios.get(`http://localhost:5000/api/taikhoan/${username || "admin"}`);
+      const res = await axios.get(`http://localhost:5000/api/taikhoan/${username}`);
       setUserInfo({
         ho_ten: res.data.name,
         department: res.data.department,
-        role: res.data.role
+        role: res.data.role,
+        employeeId: res.data.employeeId,
+        luong_co_ban: res.data.muc_luong_co_ban || "0"
       });
     } catch (error) {
       console.error("Error fetching user data", error);
     }
   };
 
-  const fetchAttendanceStats = async () => {
+  const fetchTodayAttendance = async () => {
+    if (!maNhanVien) return;
     try {
-      const maNV = "NV001"; // Placeholder
-      const res = await axios.get(`http://localhost:5000/api/chamcong/my-attendance/${maNV}`);
+      const res = await axios.get(`http://localhost:5000/api/chamcong/today/${maNhanVien}`);
+      setTodayAttendance(res.data);
+    } catch (error) {
+      console.error("Error fetching today attendance", error);
+      setTodayAttendance(null);
+    }
+  };
+
+  const fetchAttendanceStats = async () => {
+    if (!maNhanVien) return;
+    try {
+      const res = await axios.get(`http://localhost:5000/api/chamcong/stats/${maNhanVien}`);
       const data = res.data;
-      setWorkDays(data.length);
-
-      // Simple calculation: assume 8h per full day if checkout exists, else 0
-      // Real calculation should use checkin/checkout diff
-      let hours = 0;
-      data.forEach((d: any) => {
-        if (d.checkin && d.checkout) {
-          // Parse time strings HH:MM:SS
-          // For simplicity, just adding 8h per completed day
-          hours += 8;
-        }
-      });
-      setTotalHours(hours);
-
+      setWorkDays(data.so_ngay_lam_viec || 0);
+      setTotalHours(data.tong_gio_lam || 0);
     } catch (error) {
       console.error("Error fetching attendance stats", error);
     }
@@ -76,7 +81,7 @@ export default function User({ username, onLogout }: { username: string, onLogou
             </div>
             <div className="user-details-group">
               <div className="name">{userInfo.ho_ten}</div>
-              <div className="employee-id">Mã NV: ...</div>
+              <div className="employee-id">Mã NV: {userInfo.employeeId || "N/A"}</div>
             </div>
           </div>
 
@@ -140,7 +145,7 @@ export default function User({ username, onLogout }: { username: string, onLogou
                 </div>
                 <div className="stat-item">
                   <span>Lương cơ bản</span>
-                  <span>NaN ₫</span>
+                  <span>{parseFloat(userInfo.luong_co_ban || "0").toLocaleString('vi-VN')} ₫</span>
                 </div>
                 <div className="stat-item">
                   <span>Lương làm thêm</span>
@@ -148,15 +153,34 @@ export default function User({ username, onLogout }: { username: string, onLogou
                 </div>
                 <div className="stat-total">
                   <span>Tổng dự kiến</span>
-                  <span>NaN ₫</span>
+                  <span>
+                    {(
+                      totalHours >= 40
+                        ? parseFloat(userInfo.luong_co_ban || "0")
+                        : 0
+                    ).toLocaleString('vi-VN')} ₫
+                  </span>
                 </div>
+                {totalHours < 40 && (
+                  <p className="note-text">
+                    * Chưa đủ 40 giờ làm việc trong tháng nên tạm thời chưa được tính lương cứng.
+                  </p>
+                )}
               </div>
             </div>
             <div className="user-cardh1">
               <div className="stats-section">
                 <h3 className="bao-cao-header" >Kết quả trong ngày</h3>
                 <div className="stats-section1" style={{ textAlign: "center", width: "100%" }}>
-                  <p className="no-record">Không có bản ghi chấm công nào hôm nay</p>
+                  {todayAttendance ? (
+                    <div>
+                      <p>Check-in: {todayAttendance.checkin || "--:--"}</p>
+                      <p>Check-out: {todayAttendance.checkout || "--:--"}</p>
+                      <p>Tổng giờ: {todayAttendance.tong_gio || 0}h</p>
+                    </div>
+                  ) : (
+                    <p className="no-record">Không có bản ghi chấm công nào hôm nay</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -195,9 +219,9 @@ export default function User({ username, onLogout }: { username: string, onLogou
           </>
         )}
 
-        {renderPage === "chamcong" && <ListChamCongNV />}
-        {renderPage === "baocaoluong" && <BaoCaoLuongNV />}
-        {renderPage === "taikhoan" && <ListTaiKhoanNV />}
+        {renderPage === "chamcong" && <ListChamCongNV maNhanVien={maNhanVien} />}
+        {renderPage === "baocaoluong" && <BaoCaoLuongNV maNhanVien={maNhanVien} />}
+        {renderPage === "taikhoan" && <ListTaiKhoanNV username={username} />}
       </main>
 
     </div>

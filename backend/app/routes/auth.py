@@ -58,6 +58,7 @@ async def login(
                 "id": existing_user.id,
                 "username": existing_user.username,
                 "ho_ten": existing_user.ho_ten,
+                "ma_nhan_vien": existing_user.ma_nhan_vien or None,
             },
             "role": role,
         }

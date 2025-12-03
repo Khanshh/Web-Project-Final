@@ -8,6 +8,10 @@ interface ChamCong {
   ngay: string;
   checkin: string;
   checkout: string;
+  checkin_sang: string;
+  checkout_sang: string;
+  checkin_chieu: string;
+  checkout_chieu: string;
 }
 
 const ListChamCong = () => {
@@ -51,8 +55,10 @@ const ListChamCong = () => {
           <thead>
             <tr>
               <th>Mã NV</th>
-              <th>Giờ Check-in</th>
-              <th>Giờ Check-out</th>
+              <th>Check-in sáng</th>
+              <th>Check-out sáng</th>
+              <th>Check-in chiều</th>
+              <th>Check-out chiều</th>
               <th>Trạng thái</th>
             </tr>
           </thead>
@@ -60,10 +66,16 @@ const ListChamCong = () => {
             {filteredList.map((cc) => (
               <tr key={cc.id}>
                 <td>{cc.ma_nhan_vien}</td>
-                <td>{cc.checkin || "--:--"}</td>
-                <td>{cc.checkout || "--:--"}</td>
+                <td>{cc.checkin_sang || "--:--"}</td>
+                <td>{cc.checkout_sang || "--:--"}</td>
+                <td>{cc.checkin_chieu || "--:--"}</td>
+                <td>{cc.checkout_chieu || "--:--"}</td>
                 <td>
-                  {cc.checkin && cc.checkout ? "Hoàn thành" : "Đang làm việc"}
+                  {cc.checkin_sang && cc.checkout_sang && cc.checkin_chieu && cc.checkout_chieu
+                    ? "Hoàn thành 2 buổi"
+                    : (cc.checkin_sang || cc.checkout_sang || cc.checkin_chieu || cc.checkout_chieu)
+                      ? "Đã chấm một phần"
+                      : "Chưa chấm"}
                 </td>
               </tr>
             ))}

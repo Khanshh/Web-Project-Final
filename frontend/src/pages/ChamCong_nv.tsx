@@ -6,41 +6,57 @@ interface ChamCong {
   id: string;
   ma_nhan_vien: string;
   ngay: string;
-  checkin: string;
-  checkout: string;
+  checkin: string;       // tổng quát: check-in đầu tiên trong ngày
+  checkout: string;      // tổng quát: check-out cuối cùng trong ngày
+  checkin_sang: string;
+  checkout_sang: string;
+  checkin_chieu: string;
+  checkout_chieu: string;
 }
 
 interface TimeChamCong {
-  checkin: string;
-  checkout: string;
+  checkin_sang: string;
+  checkout_sang: string;
+  checkin_chieu: string;
+  checkout_chieu: string;
 }
 
-// Assuming we can get the current user's ID from somewhere, or we pass it as prop.
-// For now, let's assume we store it in localStorage or passed via props.
-// But since this component is used inside User page, maybe we can get it from there.
-// However, the User page in App.tsx passes username.
-// Let's assume username is the ma_nhan_vien for simplicity or we fetch it.
-// Actually, in App.tsx we set currentUser. Let's assume we can access it.
-// But to keep it simple, I will use a hardcoded "NV001" or try to get from localStorage if I saved it.
-// Wait, I didn't save it to localStorage in App.tsx.
-// I will assume the user is "admin" or whatever username they logged in with.
-// Ideally, `ma_nhan_vien` should be part of the user object.
-// For this demo, I will use the username as ma_nhan_vien if it looks like an ID, or just use the username.
+interface ListChamCongNVProps {
+  maNhanVien: string | null;
+}
 
-const ListChamCongNV: React.FC = () => {
+const ListChamCongNV: React.FC<ListChamCongNVProps> = ({ maNhanVien }) => {
   const [chamCong, setChamCong] = useState<ChamCong[]>([]);
-  const [timeChamCong, setTimeChamCong] = useState<TimeChamCong>({ checkin: "", checkout: "" });
+  const [timeChamCong, setTimeChamCong] = useState<TimeChamCong>({
+    checkin_sang: "",
+    checkout_sang: "",
+    checkin_chieu: "",
+    checkout_chieu: "",
+  });
   const [formChamCong, setFormChamCong] = useState(false)
   const [dateTime, setDateTime] = useState(new Date().toISOString().split('T')[0])
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  // TODO: Get real user ID. For now, using a placeholder or getting from window/local if possible.
-  // Since I can't easily pass props without changing App.tsx structure deeply (User -> ListChamCongNV),
-  // I'll try to get it from a global context or just assume a test ID for now if not passed.
-  // But wait, I can just use "admin" or the logged in username if I had it.
-  // Let's assume the user is "NV001" for testing if not provided.
-  // A better way is to save user to localStorage in App.tsx upon login.
-  const maNV = "NV001"; // Placeholder, should be dynamic
+  const isWithinWorkingHours = (date: Date) => {
+    const hour = date.getHours();
+    const minute = date.getMinutes();
+
+    // Buổi sáng: 8:00 - 12:00
+    const inMorning =
+      (hour > 8 || (hour === 8 && minute >= 0)) &&
+      hour < 12;
+
+    // Buổi chiều: 13:30 - 17:30
+    const inAfternoon =
+      (hour > 13 || (hour === 13 && minute >= 30)) &&
+      (hour < 17 || (hour === 17 && minute <= 30));
+
+    return inMorning || inAfternoon;
+  };
+
+  if (!maNhanVien) {
+    return <div>Không có thông tin nhân viên. Vui lòng đăng nhập lại.</div>;
+  }
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -49,13 +65,9 @@ const ListChamCongNV: React.FC = () => {
   }, []);
 
   const fetchMyAttendance = async () => {
+    if (!maNhanVien) return;
     try {
-      // In a real app, we would get the ID from the logged-in user state
-      // For now, let's try to fetch all and filter by "NV001" or similar
-      // Or better, I'll update the backend to allow fetching by username if I could.
-      // But I implemented /my-attendance/{ma_nhan_vien}.
-      // Let's just use a hardcoded ID for demonstration since I didn't implement full user-employee linking.
-      const res = await axios.get(`http://localhost:5000/api/chamcong/my-attendance/${maNV}`);
+      const res = await axios.get(`http://localhost:5000/api/chamcong/my-attendance/${maNhanVien}`);
       setChamCong(res.data);
 
       // Check if checked in today
@@ -63,8 +75,10 @@ const ListChamCongNV: React.FC = () => {
       const todayRecord = res.data.find((cc: ChamCong) => cc.ngay === today);
       if (todayRecord) {
         setTimeChamCong({
-          checkin: todayRecord.checkin,
-          checkout: todayRecord.checkout
+          checkin_sang: todayRecord.checkin_sang,
+          checkout_sang: todayRecord.checkout_sang,
+          checkin_chieu: todayRecord.checkin_chieu,
+          checkout_chieu: todayRecord.checkout_chieu,
         });
       }
     } catch (error) {
@@ -73,24 +87,77 @@ const ListChamCongNV: React.FC = () => {
   }
 
   const handleCheckInOut = async () => {
+    if (!maNhanVien) {
+      alert("Không có thông tin nhân viên");
+      return;
+    }
     const time = currentTime.toLocaleTimeString("vi-VN", { hour12: false });
-    const type = !timeChamCong.checkin ? "checkin" : "checkout";
+
+    // Không cho chấm công ngoài giờ làm việc
+    if (!isWithinWorkingHours(currentTime)) {
+      alert("Hiện đang ngoài giờ làm việc chính thức (8:00-12:00, 13:30-17:30), không thể chấm công.");
+      return;
+    }
+
+    // Xác định action hợp lý tiếp theo dựa trên trạng thái hiện tại + thời gian
+    const hour = currentTime.getHours();
+    const minute = currentTime.getMinutes();
+
+    let type: "checkin" | "checkout";
+
+    // Buổi sáng: 8:00 - 12:00
+    if (hour < 12) {
+      if (!timeChamCong.checkin_sang) {
+        type = "checkin";
+      } else if (!timeChamCong.checkout_sang) {
+        type = "checkout";
+      } else {
+        alert("Bạn đã hoàn thành check-in/check-out buổi sáng.");
+        return;
+      }
+    } else if (hour > 13 || (hour === 13 && minute >= 30)) {
+      // Buổi chiều: từ 13:30 trở đi
+      if (!timeChamCong.checkin_chieu) {
+        type = "checkin";
+      } else if (!timeChamCong.checkout_chieu) {
+        type = "checkout";
+      } else {
+        alert("Bạn đã hoàn thành check-in/check-out buổi chiều.");
+        return;
+      }
+    } else {
+      // Trường hợp 12:00 - 13:29 (không nằm trong working hours ở trên nên đã return rồi),
+      // code này về cơ bản sẽ không chạy tới, chỉ để an toàn.
+      alert("Hiện đang trong giờ nghỉ trưa (12:00 - 13:30), không thể chấm công.");
+      return;
+    }
 
     try {
-      await axios.post("http://localhost:5000/api/chamcong", {
-        ma_nhan_vien: maNV,
+      await axios.post("http://localhost:5000/api/chamcong/", {
+        ma_nhan_vien: maNhanVien,
         time: time,
         type: type
       });
 
+      // Cập nhật state tạm thời (server vẫn là nguồn chính, sẽ sync lại bằng fetchMyAttendance)
       if (type === "checkin") {
-        setTimeChamCong({ ...timeChamCong, checkin: time });
+        if (hour < 12) {
+          setTimeChamCong((prev) => ({ ...prev, checkin_sang: time }));
+        } else {
+          setTimeChamCong((prev) => ({ ...prev, checkin_chieu: time }));
+        }
       } else {
-        setTimeChamCong({ ...timeChamCong, checkout: time });
-        setTimeout(() => {
-          setFormChamCong(false);
-        }, 1500);
+        if (hour < 12) {
+          setTimeChamCong((prev) => ({ ...prev, checkout_sang: time }));
+        } else {
+          setTimeChamCong((prev) => ({ ...prev, checkout_chieu: time }));
+        }
       }
+
+      // Tự đóng form khi đã đủ cả 2 buổi
+      setTimeout(() => {
+        setFormChamCong(false);
+      }, 1500);
       fetchMyAttendance();
     } catch (error) {
       alert("Lỗi chấm công: " + error);
@@ -137,7 +204,6 @@ const ListChamCongNV: React.FC = () => {
                 <th>Nhân viên</th>
                 <th>🕔Buổi sáng (8:00 - 12:00)</th>
                 <th>🕔Buổi chiều (13:30 - 17:30)</th>
-                <th>Tổng giờ</th>
               </tr>
             </thead>
             <tbody>
@@ -145,12 +211,13 @@ const ListChamCongNV: React.FC = () => {
                 <tr key={cc.id}>
                   <td>{cc.ma_nhan_vien}</td>
                   <td>
-                    Check In: {cc.checkin || "--:--"}<br />
+                    Check In: {cc.checkin_sang || "--:--"}<br />
+                    Check Out: {cc.checkout_sang || "--:--"}
                   </td>
                   <td>
-                    Check Out: {cc.checkout || "--:--"}<br />
+                    Check In: {cc.checkin_chieu || "--:--"}<br />
+                    Check Out: {cc.checkout_chieu || "--:--"}
                   </td>
-                  <td>--</td>
                 </tr>
               )) : (
                 <tr>
@@ -190,20 +257,26 @@ const ListChamCongNV: React.FC = () => {
           <div className="header_time_now">
             {currentTime.toLocaleTimeString("vi-VN", { hour12: false })}
           </div>
+          {!isWithinWorkingHours(currentTime) && (
+            <div style={{ color: "red", marginTop: "8px", fontWeight: 500 }}>
+              Ngoài khung giờ làm việc chính thức (8:00-12:00, 13:30-17:30) - không thể chấm công
+            </div>
+          )}
           <div className="time_checkin">
-            <h4>Thời gian CheckIn</h4>
-            <p>{timeChamCong.checkin || "--:--:--"}</p>
+            <h4>Buổi sáng - CheckIn / CheckOut</h4>
+            <p>CheckIn: {timeChamCong.checkin_sang || "--:--:--"}</p>
+            <p>CheckOut: {timeChamCong.checkout_sang || "--:--:--"}</p>
           </div>
           <div className="time_checkout">
-            <h4>Thời gian CheckOut</h4>
-            <p>{timeChamCong.checkout || "--:--:--"}</p>
+            <h4>Buổi chiều - CheckIn / CheckOut</h4>
+            <p>CheckIn: {timeChamCong.checkin_chieu || "--:--:--"}</p>
+            <p>CheckOut: {timeChamCong.checkout_chieu || "--:--:--"}</p>
           </div>
           <div className="checkin_button">
             <button
               onClick={handleCheckInOut}
-              disabled={!!timeChamCong.checkout}
             >
-              {timeChamCong.checkin && !timeChamCong.checkout ? "Check Out" : "Check In"}
+              Chấm công / kết ca
             </button>
 
           </div>

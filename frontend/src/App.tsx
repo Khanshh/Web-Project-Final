@@ -110,6 +110,7 @@ function App() {
     return (
       <User
         username={username}
+        maNhanVien={currentUser?.ma_nhan_vien || null}
         onLogout={() => {
           setLoggedIn(false);
           setUsername("");
