@@ -25,3 +25,39 @@ async def get_stats(session: AsyncSession = Depends(get_session)):
         "phong_ban_count": pb_count,
         "chuc_vu_count": cv_count,
     }
+
+
+@router.get("/chucvu-distribution", response_description="Get employee distribution by position")
+async def get_chucvu_distribution(session: AsyncSession = Depends(get_session)):
+    """Lấy thống kê số nhân viên theo từng chức vụ"""
+    stmt = (
+        select(ChucVu.ten_chuc_vu, func.count(NhanVien.ma_nhan_vien).label("count"))
+        .outerjoin(NhanVien, ChucVu.ma_chuc_vu == NhanVien.ma_chuc_vu)
+        .group_by(ChucVu.ma_chuc_vu, ChucVu.ten_chuc_vu)
+        .order_by(ChucVu.ten_chuc_vu)
+    )
+    result = await session.execute(stmt)
+    rows = result.all()
+    
+    return {
+        "labels": [row.ten_chuc_vu for row in rows],
+        "data": [row.count or 0 for row in rows]
+    }
+
+
+@router.get("/phongban-distribution", response_description="Get employee distribution by department")
+async def get_phongban_distribution(session: AsyncSession = Depends(get_session)):
+    """Lấy thống kê số nhân viên theo từng phòng ban"""
+    stmt = (
+        select(PhongBan.ten_phong, func.count(NhanVien.ma_nhan_vien).label("count"))
+        .outerjoin(NhanVien, PhongBan.ma_phong == NhanVien.ma_phong)
+        .group_by(PhongBan.ma_phong, PhongBan.ten_phong)
+        .order_by(PhongBan.ten_phong)
+    )
+    result = await session.execute(stmt)
+    rows = result.all()
+    
+    return {
+        "labels": [row.ten_phong for row in rows],
+        "data": [row.count or 0 for row in rows]
+    }

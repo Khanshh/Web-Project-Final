@@ -24,14 +24,12 @@ interface PhongBan {
 const ListNhanVien = () => {
   const [nhamVien, setNhanVien] = useState<NhanVien[]>([]);
   const [showForm, setshowForm] = useState(false);
-  const [maNV, setmaNV] = useState("");
   const [hoTen, sethoTen] = useState("");
   const [maPhong, setmaPhong] = useState("");
   const [maChucVu, setmaChucVu] = useState("");
   const [mucLuongCoBan, setmucLuongCoBan] = useState("");
   const [formUpdate, setformUpdate] = useState(false);
   const [maNVCu, setmaNVCu] = useState("");
-  const [maNVMoi, setmaNVMoi] = useState("");
   const [hoTenMoi, sethoTenMoi] = useState("");
   const [maPhongMoi, setmaPhongMoi] = useState("");
   const [maChucVuMoi, setmaChucVuMoi] = useState("");
@@ -72,7 +70,7 @@ const ListNhanVien = () => {
   } 
 
   const handleAddNhanVien = async() => {
-    console.log({ maNV, hoTen, maPhong, maChucVu, mucLuongCoBan });
+    console.log({ hoTen, maPhong, maChucVu, mucLuongCoBan });
     if (!hoTen || !maPhong || !maChucVu || !mucLuongCoBan || !user || !pass) {
       alert("Bạn chưa điền đủ thông tin.");
       return;
@@ -88,7 +86,6 @@ const ListNhanVien = () => {
           password: pass
         });
       fetchData();
-      setmaNV("");
       sethoTen("");
       setmaPhong("");
       setmaChucVu("");
@@ -102,17 +99,20 @@ const ListNhanVien = () => {
   };
 
   const handleDeleteNhanVien = async(ma_nhan_vien: string) => {
+    if (!window.confirm("Bạn chắc chắn muốn xóa nhân viên này?")) {
+      return;
+    }
     try {
       await axios.delete(`http://localhost:5000/api/nhanvien/${ma_nhan_vien}`);
       fetchData();
-      alert("Bạn chắc chắn muốn xóa nhân viên này?");
+      alert("Xóa nhân viên thành công!");
     } catch (error) {
       alert("Xóa nhân viên thất bại.");
     }
   }
 
   const handleUpdateNhanVien = async(ma_nhan_vien: string) => {
-    if (!maNVMoi || !hoTenMoi || !maPhongMoi || !maChucVuMoi || !mucLuongCoBanMoi) {
+    if (!hoTenMoi || !maPhongMoi || !maChucVuMoi || !mucLuongCoBanMoi) {
       alert("Bạn chưa điền đủ thông tin.");
       return;
     }try {

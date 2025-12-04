@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy import select
+from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker,
@@ -25,7 +25,27 @@ async def init_db():
 
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+        # Migration nhẹ: thêm cột thu_tu_vao_cong_ty nếu chưa tồn tại
+        await conn.execute(
+            text(
+                """
+                DO $$
+                BEGIN
+                    IF NOT EXISTS (
+                        SELECT 1
+                        FROM information_schema.columns
+                        WHERE table_name = 'nhanvien'
+                          AND column_name = 'thu_tu_vao_cong_ty'
+                    ) THEN
+                        ALTER TABLE nhanvien
+                        ADD COLUMN thu_tu_vao_cong_ty INTEGER NULL;
+                    END IF;
+                END$$;
+                """
+            )
+        )
     await seed_admin_user()
+    await seed_default_chucvu()
 
 
 async def seed_admin_user():
@@ -42,5 +62,25 @@ async def seed_admin_user():
             ho_ten="Administrator",
         )
         session.add(admin)
+        await session.commit()
+
+
+async def seed_default_chucvu():
+    from app.db_models import ChucVu
+
+    default_chucvus = [
+        {"ma_chuc_vu": "TP", "ten_chuc_vu": "Trưởng phòng"},
+        {"ma_chuc_vu": "PP", "ten_chuc_vu": "Phó phòng"},
+        {"ma_chuc_vu": "NV", "ten_chuc_vu": "Nhân viên"},
+    ]
+
+    async with AsyncSessionLocal() as session:
+        for cv_data in default_chucvus:
+            existing = await session.scalar(
+                select(ChucVu).where(ChucVu.ma_chuc_vu == cv_data["ma_chuc_vu"])
+            )
+            if not existing:
+                chucvu = ChucVu(**cv_data)
+                session.add(chucvu)
         await session.commit()
 

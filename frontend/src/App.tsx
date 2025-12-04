@@ -27,6 +27,8 @@ function App() {
     phong_ban_count: 0,
     chuc_vu_count: 0
   });
+  const [chucVuDistribution, setChucVuDistribution] = useState<{labels: string[], data: number[]} | null>(null);
+  const [phongBanDistribution, setPhongBanDistribution] = useState<{labels: string[], data: number[]} | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,30 +61,69 @@ function App() {
     try {
       const res = await axios.get("http://localhost:5000/api/dashboard/stats");
       setDashboardStats(res.data);
+      
+      // Fetch dữ liệu phân bố theo chức vụ
+      try {
+        const cvRes = await axios.get("http://localhost:5000/api/dashboard/chucvu-distribution");
+        if (cvRes.data.labels.length > 0 && cvRes.data.data.some((d: number) => d > 0)) {
+          setChucVuDistribution(cvRes.data);
+        } else {
+          setChucVuDistribution(null);
+        }
+      } catch (error) {
+        console.error("Error fetching chuc vu distribution:", error);
+        setChucVuDistribution(null);
+      }
+      
+      // Fetch dữ liệu phân bố theo phòng ban
+      try {
+        const pbRes = await axios.get("http://localhost:5000/api/dashboard/phongban-distribution");
+        if (pbRes.data.labels.length > 0 && pbRes.data.data.some((d: number) => d > 0)) {
+          setPhongBanDistribution(pbRes.data);
+        } else {
+          setPhongBanDistribution(null);
+        }
+      } catch (error) {
+        console.error("Error fetching phong ban distribution:", error);
+        setPhongBanDistribution(null);
+      }
     } catch (error) {
       console.error("Error fetching stats:", error);
     }
   };
 
-  const DashboardChart = () => {
+  const ChucVuChart = ({ data }: { data: { labels: string[], data: number[] } | null }) => {
     const chartRef = useRef<HTMLCanvasElement>(null);
     const chartInstanceRef = useRef<Chart | null>(null);
 
     useEffect(() => {
       if (!chartRef.current) return;
+      
+      // Chỉ vẽ biểu đồ khi có dữ liệu
+      if (!data || data.labels.length === 0 || !data.data.some(d => d > 0)) {
+        if (chartInstanceRef.current) {
+          chartInstanceRef.current.destroy();
+          chartInstanceRef.current = null;
+        }
+        return;
+      }
 
       if (chartInstanceRef.current) chartInstanceRef.current.destroy();
+
+      const colors = ["#4f8beb", "#0350f5", "#72c2ff", "#a8d5ff", "#5ba3f5", "#1e6dd0"];
+      const backgroundColors = data.labels.map((_, i) => colors[i % colors.length]);
+      const borderColors = data.labels.map((_, i) => colors[i % colors.length]);
 
       chartInstanceRef.current = new Chart(chartRef.current, {
         type: "bar",
         data: {
-          labels: ["Trưởng phòng", "Phó phòng", "Nhân viên"],
+          labels: data.labels,
           datasets: [
             {
               label: "Số lượng",
-              data: [2, 3, 1], // Mock data for chart, could be real API too
-              backgroundColor: ["#4f8beb", "#0350f5", "#72c2ff"],
-              borderColor: ["#4f8beb", "#0350f5", "#72c2ff"],
+              data: data.data,
+              backgroundColor: backgroundColors,
+              borderColor: borderColors,
               borderWidth: 1,
             },
           ],
@@ -96,7 +137,77 @@ function App() {
           plugins: { legend: { display: false } },
         },
       });
-    }, []);
+    }, [data]);
+
+    if (!data || data.labels.length === 0 || !data.data.some(d => d > 0)) {
+      return (
+        <div style={{ height: "300px", display: "flex", alignItems: "center", justifyContent: "center", color: "#999" }}>
+          Chưa có dữ liệu
+        </div>
+      );
+    }
+
+    return (
+      <div style={{ height: "300px", width: "100%" }}>
+        <canvas ref={chartRef} />
+      </div>
+    );
+  };
+
+  const PhongBanChart = ({ data }: { data: { labels: string[], data: number[] } | null }) => {
+    const chartRef = useRef<HTMLCanvasElement>(null);
+    const chartInstanceRef = useRef<Chart | null>(null);
+
+    useEffect(() => {
+      if (!chartRef.current) return;
+      
+      // Chỉ vẽ biểu đồ khi có dữ liệu
+      if (!data || data.labels.length === 0 || !data.data.some(d => d > 0)) {
+        if (chartInstanceRef.current) {
+          chartInstanceRef.current.destroy();
+          chartInstanceRef.current = null;
+        }
+        return;
+      }
+
+      if (chartInstanceRef.current) chartInstanceRef.current.destroy();
+
+      const colors = ["#4f8beb", "#0350f5", "#72c2ff", "#a8d5ff", "#5ba3f5", "#1e6dd0"];
+      const backgroundColors = data.labels.map((_, i) => colors[i % colors.length]);
+      const borderColors = data.labels.map((_, i) => colors[i % colors.length]);
+
+      chartInstanceRef.current = new Chart(chartRef.current, {
+        type: "bar",
+        data: {
+          labels: data.labels,
+          datasets: [
+            {
+              label: "Số lượng",
+              data: data.data,
+              backgroundColor: backgroundColors,
+              borderColor: borderColors,
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { beginAtZero: true, ticks: { stepSize: 1 } },
+          },
+          plugins: { legend: { display: false } },
+        },
+      });
+    }, [data]);
+
+    if (!data || data.labels.length === 0 || !data.data.some(d => d > 0)) {
+      return (
+        <div style={{ height: "300px", display: "flex", alignItems: "center", justifyContent: "center", color: "#999" }}>
+          Chưa có dữ liệu
+        </div>
+      );
+    }
 
     return (
       <div style={{ height: "300px", width: "100%" }}>
@@ -208,12 +319,12 @@ function App() {
 
                   <section className="card wide">
                     <h3>Phân bố theo Phòng ban</h3>
-                    <div className="stat-value" style={{ fontSize: "24px" }}>{dashboardStats.phong_ban_count} Phòng ban</div>
+                    <PhongBanChart data={phongBanDistribution} />
                   </section>
 
                   <section className="card wide">
                     <h3>Phân bố theo Chức vụ</h3>
-                    <DashboardChart />
+                    <ChucVuChart data={chucVuDistribution} />
                   </section>
 
                   <section className="card">

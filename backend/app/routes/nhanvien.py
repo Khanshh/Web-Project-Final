@@ -2,11 +2,11 @@ import uuid
 from decimal import Decimal
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy import select, update
+from sqlalchemy import select, update, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db import get_session
-from app.db_models import NhanVien, User
+from app.db_models import NhanVien, User, ChamCong, Luong
 from app.models import NhanVienSchema, UpdateNhanVienSchema
 
 router = APIRouter()
@@ -43,13 +43,25 @@ async def add_nhanvien(
         if existing:
             raise HTTPException(status_code=400, detail="Username đã tồn tại")
 
-    next_id = f"NV{uuid.uuid4().hex[:5].upper()}"
+    # Tính thứ tự vào công ty (tối đa 4 chữ số)
+    # Lấy MAX(thu_tu_vao_cong_ty) hiện tại rồi +1
+    result = await session.execute(select(func.max(NhanVien.thu_tu_vao_cong_ty)))
+    current_max = result.scalar() or 0
+    next_order = current_max + 1
+    order_str = f"{next_order:04d}"
+
+    # Sinh mã nhân viên theo cú pháp: <Mã phòng><Mã chức vụ><Thứ tự vào công ty>
+    ma_phong = data["ma_phong"]
+    ma_chuc_vu = data["ma_chuc_vu"]
+    ma_nhan_vien = f"{ma_phong}{ma_chuc_vu}{order_str}"
+
     new_nv = NhanVien(
-        ma_nhan_vien=data.get("ma_nhan_vien", next_id),
+        ma_nhan_vien=ma_nhan_vien,
         ho_ten=data["ho_ten"],
-        ma_phong=data["ma_phong"],
-        ma_chuc_vu=data["ma_chuc_vu"],
+        ma_phong=ma_phong,
+        ma_chuc_vu=ma_chuc_vu,
         muc_luong_co_ban=Decimal(data["muc_luong_co_ban"]),
+        thu_tu_vao_cong_ty=next_order,
     )
     session.add(new_nv)
 
@@ -74,37 +86,66 @@ async def update_nhanvien(
     req: UpdateNhanVienSchema = Body(...),
     session: AsyncSession = Depends(get_session),
 ):
-    req = {k: v for k, v in req.dict().items() if v is not None}
+    req_data = {k: v for k, v in req.dict().items() if v is not None}
 
-    update_data = {}
-    if "ho_ten_moi" in req:
-        update_data["ho_ten"] = req["ho_ten_moi"]
-    if "ma_phong_moi" in req:
-        update_data["ma_phong"] = req["ma_phong_moi"]
-    if "ma_chuc_vu_moi" in req:
-        update_data["ma_chuc_vu"] = req["ma_chuc_vu_moi"]
-    if "muc_luong_co_ban_moi" in req:
-        update_data["muc_luong_co_ban"] = Decimal(req["muc_luong_co_ban_moi"])
+    # Lấy nhân viên hiện tại
+    nv = await session.scalar(select(NhanVien).where(NhanVien.ma_nhan_vien == id))
+    if not nv:
+        raise HTTPException(status_code=404, detail="Nhan vien not found")
 
-    if update_data:
-        stmt = (
-            update(NhanVien)
-            .where(NhanVien.ma_nhan_vien == id)
-            .values(**update_data)
-            .execution_options(synchronize_session="fetch")
-        )
-        result = await session.execute(stmt)
-        if result.rowcount == 0:
-            raise HTTPException(status_code=404, detail="Nhan vien not found")
-        await session.commit()
-        return {"message": "Nhan vien updated successfully"}
-    raise HTTPException(status_code=400, detail="No data to update")
+    # Cập nhật các trường cơ bản
+    if "ho_ten_moi" in req_data:
+        nv.ho_ten = req_data["ho_ten_moi"]
+    if "muc_luong_co_ban_moi" in req_data:
+        nv.muc_luong_co_ban = Decimal(req_data["muc_luong_co_ban_moi"])
+
+    # Nếu thay đổi phòng ban hoặc chức vụ thì sinh lại mã nhân viên
+    ma_phong_moi = req_data.get("ma_phong_moi")
+    ma_chuc_vu_moi = req_data.get("ma_chuc_vu_moi")
+
+    if ma_phong_moi or ma_chuc_vu_moi:
+        new_ma_phong = ma_phong_moi or nv.ma_phong
+        new_ma_chuc_vu = ma_chuc_vu_moi or nv.ma_chuc_vu
+
+        # Thứ tự vào công ty giữ nguyên, chỉ thay đổi tiền tố
+        order = nv.thu_tu_vao_cong_ty or 0
+        order_str = f"{order:04d}"
+        nv.ma_phong = new_ma_phong
+        nv.ma_chuc_vu = new_ma_chuc_vu
+        nv.ma_nhan_vien = f"{new_ma_phong}{new_ma_chuc_vu}{order_str}"
+
+    await session.commit()
+    return {"message": "Nhan vien updated successfully"}
 
 @router.delete("/{id}", response_description="Nhan vien data deleted from the database")
 async def delete_nhanvien(id: str, session: AsyncSession = Depends(get_session)):
     nv = await session.get(NhanVien, id)
     if not nv:
         raise HTTPException(status_code=404, detail="Nhan vien not found")
+    
+    # Xóa tất cả các bản ghi liên quan trước
+    # 1. Xóa các user liên quan
+    users_stmt = select(User).where(User.ma_nhan_vien == id)
+    users_result = await session.execute(users_stmt)
+    users = users_result.scalars().all()
+    for user in users:
+        await session.delete(user)
+    
+    # 2. Xóa các bản ghi chấm công liên quan
+    chamcong_stmt = select(ChamCong).where(ChamCong.ma_nhan_vien == id)
+    chamcong_result = await session.execute(chamcong_stmt)
+    chamcongs = chamcong_result.scalars().all()
+    for cc in chamcongs:
+        await session.delete(cc)
+    
+    # 3. Xóa các bản ghi lương liên quan
+    luong_stmt = select(Luong).where(Luong.ma_nhan_vien == id)
+    luong_result = await session.execute(luong_stmt)
+    luongs = luong_result.scalars().all()
+    for luong in luongs:
+        await session.delete(luong)
+    
+    # 4. Cuối cùng mới xóa nhân viên
     await session.delete(nv)
     await session.commit()
     return {"message": "Nhan vien deleted successfully"}
