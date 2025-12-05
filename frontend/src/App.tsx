@@ -172,12 +172,12 @@ function App() {
 
       if (chartInstanceRef.current) chartInstanceRef.current.destroy();
 
-      const colors = ["#4f8beb", "#0350f5", "#72c2ff", "#a8d5ff", "#5ba3f5", "#1e6dd0"];
+      const colors = ["#4f8beb", "#0350f5", "#72c2ff", "#a8d5ff", "#5ba3f5", "#1e6dd0", "#ff6384", "#ffce56", "#36a2eb", "#cc65fe"];
       const backgroundColors = data.labels.map((_, i) => colors[i % colors.length]);
-      const borderColors = data.labels.map((_, i) => colors[i % colors.length]);
+      const borderColors = "#ffffff";
 
       chartInstanceRef.current = new Chart(chartRef.current, {
-        type: "bar",
+        type: "pie",
         data: {
           labels: data.labels,
           datasets: [
@@ -186,17 +186,25 @@ function App() {
               data: data.data,
               backgroundColor: backgroundColors,
               borderColor: borderColors,
-              borderWidth: 1,
+              borderWidth: 2,
             },
           ],
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          scales: {
-            y: { beginAtZero: true, ticks: { stepSize: 1 } },
+          plugins: { 
+            legend: { 
+              display: true,
+              position: "bottom",
+              labels: {
+                padding: 15,
+                font: {
+                  size: 12
+                }
+              }
+            } 
           },
-          plugins: { legend: { display: false } },
         },
       });
     }, [data]);
