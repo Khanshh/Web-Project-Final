@@ -173,10 +173,22 @@ export default function User({ username, maNhanVien, onLogout }: { username: str
                 <h3 className="bao-cao-header" >Kết quả trong ngày</h3>
                 <div className="stats-section1" style={{ textAlign: "center", width: "100%" }}>
                   {todayAttendance ? (
-                    <div>
-                      <p>Check-in: {todayAttendance.checkin || "--:--"}</p>
-                      <p>Check-out: {todayAttendance.checkout || "--:--"}</p>
-                      <p>Tổng giờ: {todayAttendance.tong_gio || 0}h</p>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                      <div style={{ borderBottom: "1px solid #e0e0e0", paddingBottom: "12px" }}>
+                        <h4 style={{ margin: "0 0 8px 0", color: "#666", fontSize: "14px" }}>🌅 Buổi sáng</h4>
+                        <p style={{ margin: "4px 0" }}>Check-in: <strong>{todayAttendance.checkin_sang || "--:--"}</strong></p>
+                        <p style={{ margin: "4px 0" }}>Check-out: <strong>{todayAttendance.checkout_sang || "--:--"}</strong></p>
+                      </div>
+                      <div style={{ paddingTop: "12px" }}>
+                        <h4 style={{ margin: "0 0 8px 0", color: "#666", fontSize: "14px" }}>🌆 Buổi chiều</h4>
+                        <p style={{ margin: "4px 0" }}>Check-in: <strong>{todayAttendance.checkin_chieu || "--:--"}</strong></p>
+                        <p style={{ margin: "4px 0" }}>Check-out: <strong>{todayAttendance.checkout_chieu || "--:--"}</strong></p>
+                      </div>
+                      <div style={{ marginTop: "8px", paddingTop: "12px", borderTop: "1px solid #e0e0e0" }}>
+                        <p style={{ margin: "4px 0", fontWeight: "bold", color: "#2563eb" }}>
+                          Tổng giờ: {todayAttendance.tong_gio || 0}h
+                        </p>
+                      </div>
                     </div>
                   ) : (
                     <p className="no-record">Không có bản ghi chấm công nào hôm nay</p>

@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from decimal import Decimal
 from datetime import date, timedelta
 import uuid
+import random
 
 from app.db import get_session
 from app.db_models import NhanVien, User, PhongBan, ChucVu, ChamCong, Luong
@@ -151,6 +152,7 @@ async def seed_demo_employees(session: AsyncSession = Depends(get_session)):
     next_order = current_max
 
     created = 0
+    total_chamcong = 0
     for i in range(1, 51):
         next_order += 1
         order_str = f"{next_order:04d}"
@@ -184,43 +186,163 @@ async def seed_demo_employees(session: AsyncSession = Depends(get_session)):
         )
         session.add(user)
 
-        # Tạo dữ liệu chấm công mẫu (3 ngày gần nhất)
+        # Tạo dữ liệu chấm công cho TẤT CẢ các ngày trong tháng hiện tại
         today = date.today()
-        for d in range(1, 4):
-            work_date = today - timedelta(days=d)
-            cc = ChamCong(
-                id=str(uuid.uuid4()),
-                ma_nhan_vien=ma_nhan_vien,
-                ngay=work_date,
-                checkin_sang="08:00",
-                checkout_sang="12:00",
-                checkin_chieu="13:30",
-                checkout_chieu="17:30",
-            )
-            session.add(cc)
+        current_year = today.year
+        current_month = today.month
+        
+        # Tính ngày đầu và cuối tháng hiện tại
+        first_day_of_month = date(current_year, current_month, 1)
+        if current_month == 12:
+            last_day_of_month = date(current_year + 1, 1, 1) - timedelta(days=1)
+        else:
+            last_day_of_month = date(current_year, current_month + 1, 1) - timedelta(days=1)
+        
+        # Tạo chấm công cho từng ngày trong tháng (chỉ các ngày đã qua, không tạo ngày tương lai)
+        chamcong_count = 0
+        current_date = first_day_of_month
+        while current_date <= today and current_date <= last_day_of_month:
+            # Bỏ qua chủ nhật (ngày 6 trong tuần, 0=Monday, 6=Sunday)
+            if current_date.weekday() != 6:  # Không phải chủ nhật
+                # Một số nhân viên có thể nghỉ ngẫu nhiên (10% cơ hội)
+                if random.random() > 0.1:  # 90% đi làm
+                    # Giờ làm việc có thể thay đổi một chút để tự nhiên hơn
+                    checkin_sang_hour = 7 + random.randint(0, 1)  # 7-8 giờ
+                    checkin_sang_min = random.choice([0, 15, 30])
+                    checkout_sang_hour = 11 + random.randint(0, 1)  # 11-12 giờ
+                    checkout_sang_min = random.choice([0, 15, 30, 45])
+                    
+                    checkin_chieu_hour = 13 + random.randint(0, 1)  # 13-14 giờ
+                    checkin_chieu_min = random.choice([0, 15, 30])
+                    checkout_chieu_hour = 17 + random.randint(0, 1)  # 17-18 giờ
+                    checkout_chieu_min = random.choice([0, 15, 30, 45])
+                    
+                    checkin_sang_str = f"{checkin_sang_hour:02d}:{checkin_sang_min:02d}:00"
+                    checkout_sang_str = f"{checkout_sang_hour:02d}:{checkout_sang_min:02d}:00"
+                    checkin_chieu_str = f"{checkin_chieu_hour:02d}:{checkin_chieu_min:02d}:00"
+                    checkout_chieu_str = f"{checkout_chieu_hour:02d}:{checkout_chieu_min:02d}:00"
+                    
+                    # Set checkin/checkout tổng quát (checkin = sớm nhất, checkout = muộn nhất)
+                    checkin_total = checkin_sang_str  # Buổi sáng sớm hơn
+                    checkout_total = checkout_chieu_str  # Buổi chiều muộn hơn
+                    
+                    cc = ChamCong(
+                        id=str(uuid.uuid4()),
+                        ma_nhan_vien=ma_nhan_vien,
+                        ngay=current_date,
+                        checkin=checkin_total,
+                        checkout=checkout_total,
+                        checkin_sang=checkin_sang_str,
+                        checkout_sang=checkout_sang_str,
+                        checkin_chieu=checkin_chieu_str,
+                        checkout_chieu=checkout_chieu_str,
+                    )
+                    session.add(cc)
+                    chamcong_count += 1
+                    total_chamcong += 1
+            current_date += timedelta(days=1)
+        
+        # Tạo chấm công cho tháng trước (để có dữ liệu demo đầy đủ hơn)
+        prev_month = current_month - 1
+        prev_year = current_year
+        if prev_month == 0:
+            prev_month = 12
+            prev_year -= 1
+        
+        prev_first_day = date(prev_year, prev_month, 1)
+        if prev_month == 12:
+            prev_last_day = date(prev_year + 1, 1, 1) - timedelta(days=1)
+        else:
+            prev_last_day = date(prev_year, prev_month + 1, 1) - timedelta(days=1)
+        
+        prev_date = prev_first_day
+        while prev_date <= prev_last_day:
+            if prev_date.weekday() != 6:  # Không phải chủ nhật
+                if random.random() > 0.1:  # 90% đi làm
+                    checkin_sang_hour = 7 + random.randint(0, 1)
+                    checkin_sang_min = random.choice([0, 15, 30])
+                    checkout_sang_hour = 11 + random.randint(0, 1)
+                    checkout_sang_min = random.choice([0, 15, 30, 45])
+                    
+                    checkin_chieu_hour = 13 + random.randint(0, 1)
+                    checkin_chieu_min = random.choice([0, 15, 30])
+                    checkout_chieu_hour = 17 + random.randint(0, 1)
+                    checkout_chieu_min = random.choice([0, 15, 30, 45])
+                    
+                    checkin_sang_str = f"{checkin_sang_hour:02d}:{checkin_sang_min:02d}:00"
+                    checkout_sang_str = f"{checkout_sang_hour:02d}:{checkout_sang_min:02d}:00"
+                    checkin_chieu_str = f"{checkin_chieu_hour:02d}:{checkin_chieu_min:02d}:00"
+                    checkout_chieu_str = f"{checkout_chieu_hour:02d}:{checkout_chieu_min:02d}:00"
+                    
+                    # Set checkin/checkout tổng quát
+                    checkin_total = checkin_sang_str
+                    checkout_total = checkout_chieu_str
+                    
+                    cc = ChamCong(
+                        id=str(uuid.uuid4()),
+                        ma_nhan_vien=ma_nhan_vien,
+                        ngay=prev_date,
+                        checkin=checkin_total,
+                        checkout=checkout_total,
+                        checkin_sang=checkin_sang_str,
+                        checkout_sang=checkout_sang_str,
+                        checkin_chieu=checkin_chieu_str,
+                        checkout_chieu=checkout_chieu_str,
+                    )
+                    session.add(cc)
+                    chamcong_count += 1
+                    total_chamcong += 1
+            prev_date += timedelta(days=1)
 
-        # Tạo dữ liệu lương mẫu cho tháng hiện tại
-        thang_nam = today.strftime("%Y-%m")
-        luong = Luong(
+        # Tạo dữ liệu lương mẫu cho tháng hiện tại và tháng trước
+        thang_nam_hien_tai = today.strftime("%Y-%m")
+        thang_nam_truoc = f"{prev_year:04d}-{prev_month:02d}"
+        
+        # Lương tháng hiện tại (sẽ được tính tự động sau khi có chấm công)
+        luong_hien_tai = Luong(
             id=str(uuid.uuid4()),
             ma_nhan_vien=ma_nhan_vien,
-            thang_nam=thang_nam,
-            tong_gio_lam=Decimal("160.0"),
-            gio_tang_ca=Decimal("10.0"),
+            thang_nam=thang_nam_hien_tai,
+            tong_gio_lam=Decimal("0"),  # Sẽ được tính lại sau
+            gio_tang_ca=Decimal("0"),
             luong_co_ban=base_salary,
-            luong_tang_ca=Decimal("1000000"),
-            luong_thuc_nhan=base_salary + Decimal("1000000"),
+            luong_tang_ca=Decimal("0"),
+            luong_thuc_nhan=base_salary,
             ngay_tinh=today,
-            ghi_chu="Dữ liệu lương demo",
+            ghi_chu="Dữ liệu lương demo - sẽ được tính tự động",
         )
-        session.add(luong)
+        session.add(luong_hien_tai)
+        
+        # Lương tháng trước (có dữ liệu mẫu)
+        tong_gio_thang_truoc = Decimal(str(160 + random.randint(-20, 20)))  # 140-180 giờ
+        gio_tang_ca_thang_truoc = max(Decimal("0"), tong_gio_thang_truoc - Decimal("40"))
+        hourly_rate = base_salary / Decimal("40")
+        luong_tang_ca_thang_truoc = gio_tang_ca_thang_truoc * hourly_rate * Decimal("1.5") if gio_tang_ca_thang_truoc > 0 else Decimal("0")
+        luong_thuc_nhan_thang_truoc = base_salary + luong_tang_ca_thang_truoc
+        
+        luong_thang_truoc = Luong(
+            id=str(uuid.uuid4()),
+            ma_nhan_vien=ma_nhan_vien,
+            thang_nam=thang_nam_truoc,
+            tong_gio_lam=tong_gio_thang_truoc,
+            gio_tang_ca=gio_tang_ca_thang_truoc,
+            luong_co_ban=base_salary,
+            luong_tang_ca=luong_tang_ca_thang_truoc,
+            luong_thuc_nhan=luong_thuc_nhan_thang_truoc,
+            ngay_tinh=prev_last_day,
+            ghi_chu="Dữ liệu lương demo tháng trước",
+        )
+        session.add(luong_thang_truoc)
 
         created += 1
 
     await session.commit()
 
     return {
-        "message": f"Đã tạo {created} nhân viên demo",
+        "message": f"Đã tạo {created} nhân viên demo với đầy đủ dữ liệu",
         "from_order": current_max + 1,
         "to_order": next_order,
+        "total_chamcong": total_chamcong,
+        "total_users": created,
+        "total_luong": created * 2,  # 2 tháng lương cho mỗi nhân viên
     }

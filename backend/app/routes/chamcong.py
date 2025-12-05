@@ -210,21 +210,35 @@ async def get_attendance_stats(
     work_days = 0
     today_record = None
     
-    for cc in records:
-        if cc.checkin and cc.checkout:
+    def calc_hours_for_record(cc: ChamCong) -> float:
+        """Tính tổng giờ làm việc từ các buổi sáng/chiều"""
+        total = 0.0
+        
+        def _calc_hours(checkin_str: str | None, checkout_str: str | None) -> float:
+            if not checkin_str or not checkout_str:
+                return 0.0
             try:
-                checkin_time = datetime.strptime(cc.checkin, "%H:%M:%S").time()
-                checkout_time = datetime.strptime(cc.checkout, "%H:%M:%S").time()
+                checkin_time = datetime.strptime(checkin_str, "%H:%M:%S").time()
+                checkout_time = datetime.strptime(checkout_str, "%H:%M:%S").time()
                 checkin_dt = datetime.combine(cc.ngay, checkin_time)
                 checkout_dt = datetime.combine(cc.ngay, checkout_time)
                 if checkout_dt < checkin_dt:
                     checkout_dt += timedelta(days=1)
                 diff = checkout_dt - checkin_dt
-                hours = diff.total_seconds() / 3600.0
-                total_hours += hours
-                work_days += 1
+                return diff.total_seconds() / 3600.0
             except (ValueError, AttributeError):
-                pass
+                return 0.0
+        
+        # Cộng giờ làm việc của từng buổi
+        total += _calc_hours(getattr(cc, "checkin_sang", None), getattr(cc, "checkout_sang", None))
+        total += _calc_hours(getattr(cc, "checkin_chieu", None), getattr(cc, "checkout_chieu", None))
+        return total
+    
+    for cc in records:
+        hours = calc_hours_for_record(cc)
+        if hours > 0:
+            total_hours += hours
+            work_days += 1
         
         if cc.ngay == today:
             today_record = serialize_cc(cc)
