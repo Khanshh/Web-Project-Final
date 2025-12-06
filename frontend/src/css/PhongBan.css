@@ -65,26 +65,21 @@
 .content_title_pb {
   display: flex;
   align-items: center;
-  width: 40%;
+  width: 50%;
   height: 36px;
-}
-
-.content_title_pb button {
-  padding: 0 10px;
-  font-size: 14px;
-  background: linear-gradient(90deg, #0066ff, #0066ff);
-  color: #fff;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
   margin: 0;
 }
 
-.content_title_2 button:hover {
-  background: linear-gradient(90deg, #0066ff, #0056e0);
-  transform: translateY(-1px);
+.content_title_pb button {
+  background: linear-gradient(90deg, #395f99, #30abca);
+  color: #fff;
+  display: flex;          
+  align-items: center;   
+  justify-content: center; 
+  margin: 0;
+  height: 36px;
 }
+
 
 .content_main {
   background: #fff;
@@ -168,14 +163,12 @@
 }
 
 .button_edit:hover {
-  background-color: rgba(0, 132, 255, 0.12);
-  color: #003c97;
+  background: rgb(0, 128, 255);
   transform: scale(1.15);
 }
 
 .button_delete:hover {
-  background-color: rgba(250, 46, 50, 0.12);
-  color: #c90101;
+  background: rgb(255, 0, 0);
   transform: scale(1.15);
 }
 
@@ -265,14 +258,17 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 10px; /* khoảng cách giữa 2 nút */
+  gap: 10px;
   margin-top: 20px;
-  width: 336px;
 }
 
+.form_buttons_pb .button_add {
+  border-radius: 8px;
+  width: 80%;
+}
 
 .form_buttons_pb .button_add button {
-  background-color: #007bff;
+  background: linear-gradient(90deg, #395f99, #30abca);
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -280,17 +276,19 @@
   padding: 8px 0;
   font-size: 14px;
   cursor: pointer;
-  width: 256px;
+  width: 100%;
   transition: background 0.2s, transform 0.1s;
 }
 
 .form_buttons_pb .button_add button:hover {
-  background-color: #0063d1;
+  background: #4bbadb;
   transform: scale(1.03);
+  color: #000000;
 }
 
 .form_buttons_pb .button_cancel {
   border-radius: 8px;
+  width: 20%;
 }
 
 .form_buttons_pb .button_cancel button {
@@ -301,14 +299,15 @@
   padding: 8px 16px;
   font-size: 14px;
   cursor: pointer;
-  width: 70px;
-   
+  width: 100%;
+  transition: background 0.2s, transform 0.1s;   
   border: 1.5px solid #82d1f0;
 }
 
 .form_buttons_pb .button_cancel button:hover {
-  background-color: #b3daff;
+  background: #b3daff;
   transform: scale(1.03);
+  color: #ce0000;
 }
 
 /* === Hiệu ứng hiện form === */

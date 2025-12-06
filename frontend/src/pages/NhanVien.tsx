@@ -157,7 +157,7 @@ const ListNhanVien = () => {
       <div className="container_nv">
         <div className="content_title">
           <div className="content_title_1">
-            <h4> Quản lý Nhân viên</h4>
+            <h4>Quản lý Nhân viên</h4>
             <p>Quản lý thông tin chi tiết nhân viên và mức lương </p>
           </div>
           <div className="searchbox_nv">
@@ -221,7 +221,7 @@ const ListNhanVien = () => {
                 <h4>Thêm nhân viên mới</h4>
                 <p>Nhập thông tin nhân viên mới</p>
               </div>
-              <div className="form_input">
+              <div className="form_input_type">
                 <button onClick={() => { setShowTTNV(true); setShowTKDN(false); }}>
                   Thông Tin Nhân Viên
                 </button>
@@ -300,12 +300,12 @@ const ListNhanVien = () => {
                 </div>
               </div>
               )} 
-              <div className="form_buttons_nv">
+              <div className="form_buttons_type_nv">
                 <div className="button_add">
                   <button 
                     onClick={() => {
                       handleAddNhanVien();
-                      setShowTTNV(false);   // mặc định mở tab này
+                      setShowTTNV(false); 
                       setShowTKDN(false);
                     }}
                   >
@@ -329,7 +329,7 @@ const ListNhanVien = () => {
                 <h4>Sửa nhân viên</h4>
                 <p>Cập nhật thông tin nhân viên</p>
               </div>
-              <div className="form_input">
+              <div className="form_input_type">
                 <button onClick={() => { setShowTTNV(true); setShowTKDN(false); }}>
                   Thông Tin Nhân Viên
                 </button>
@@ -408,7 +408,7 @@ const ListNhanVien = () => {
                 </div>
               </div>
               )} 
-              <div className="form_buttons_nv">
+              <div className="form_buttons_type_nv">
                 <div className="button_add">
                   <button onClick={() =>handleUpdateNhanVien(maNVCu)}> Cập nhật </button>
                 </div>
