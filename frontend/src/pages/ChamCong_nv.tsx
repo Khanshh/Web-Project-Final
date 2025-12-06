@@ -54,6 +54,23 @@ const ListChamCongNV: React.FC<ListChamCongNVProps> = ({ maNhanVien }) => {
     return inMorning || inAfternoon;
   };
 
+  // Hàm kiểm tra trạng thái đi muộn/dúng giờ
+  const checkLateStatus = (time: string, shift: "morning" | "afternoon") => {
+    if (!time) return null;
+
+    const [h, m] = time.split(":").map(Number);
+
+    if (shift === "morning") {
+      // Chuẩn 08:00
+      if (h > 8 || (h === 8 && m > 0)) return "late";
+      return "ontime";
+    }
+
+    // afternoon → Chuẩn 13:30
+    if (h > 13 || (h === 13 && m > 30)) return "late";
+    return "ontime";
+  };
+
   if (!maNhanVien) {
     return <div>Không có thông tin nhân viên. Vui lòng đăng nhập lại.</div>;
   }
@@ -211,11 +228,49 @@ const ListChamCongNV: React.FC<ListChamCongNVProps> = ({ maNhanVien }) => {
                 <tr key={cc.id}>
                   <td>{cc.ma_nhan_vien}</td>
                   <td>
-                    Check In: {cc.checkin_sang || "--:--"}<br />
+                    Check In: {cc.checkin_sang || "--:--"}
+                              {cc.checkin_sang && (
+                                <span
+                                  style={{
+                                    marginLeft: 6,
+                                    color:
+                                      checkLateStatus(cc.checkin_sang, "morning") === "late"
+                                        ? "red"
+                                        : "green",
+                                    fontWeight: 500,
+                                  }}
+                                >
+                                  (
+                                  {checkLateStatus(cc.checkin_sang, "morning") === "late"
+                                    ? "Muộn"
+                                    : "Đúng giờ"}
+                                  )
+                                </span>
+                              )}
+                    <br />
                     Check Out: {cc.checkout_sang || "--:--"}
                   </td>
                   <td>
-                    Check In: {cc.checkin_chieu || "--:--"}<br />
+                    Check In: {cc.checkin_chieu || "--:--"}
+                              {cc.checkin_chieu && (
+                                <span
+                                  style={{
+                                    marginLeft: 6,
+                                    color:
+                                      checkLateStatus(cc.checkin_chieu, "afternoon") === "late"
+                                        ? "red"
+                                        : "green",
+                                    fontWeight: 500,
+                                  }}
+                                >
+                                  (
+                                  {checkLateStatus(cc.checkin_chieu, "afternoon") === "late"
+                                    ? "Muộn"
+                                    : "Đúng giờ"}
+                                  )
+                                </span>
+                              )}
+                    <br />
                     Check Out: {cc.checkout_chieu || "--:--"}
                   </td>
                 </tr>
