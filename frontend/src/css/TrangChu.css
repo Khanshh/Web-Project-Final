@@ -259,19 +259,19 @@ body{
 }
 .avatar{
   width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg, #ff9900, #ff6b00);display:grid;place-items:center;font-size:20px;
-  flex-shrink:0; border: 2px solid rgba(255,255,255,0.3);
+  flex-shrink:0; border: 2px solid rgba(255,255,255,0.3); margin-top:8%;
   box-shadow:0 4px 12px rgba(255,153,0,0.3);
 }
-.profile-txt{flex:1}
-.profile-name{font-weight:600;font-size:15px;color:#e9e7e7; }
+.profile-txt{flex:1;margin-top:-4%;}
+.profile-name{font-weight:600;font-size:15px;color:#fff; }
 .profile-handle{font-size:12px;color:rgba(255, 255, 255, 0.6);margin-top:2px}
 .role-chip{
   font-size:11px;padding:6px 10px;border-radius:10px;background:linear-gradient(135deg, rgba(73, 153, 44, 0.9), rgba(59, 130, 35, 0.9));color:#ffffff;font-weight:700;
-  box-shadow:0 2px 8px rgba(73, 153, 44, 0.3);
+  box-shadow:0 2px 8px rgba(73, 153, 44, 0.3);margin-top: 5%;
 }
 
 /* nav */
-.nav{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.nav{display:flex;flex-direction:column;gap:6px;margin-top:12%;}
 .nav-item{
   display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;color:rgba(0, 0, 0, 0.85);text-decoration:none;font-weight:600;font-size:14px;transition:all 0.3s ease;cursor:pointer;
 }
@@ -350,7 +350,7 @@ body{
 .card{
   background:var(--card-bg);
   border-radius:14px;
-  padding:18px;
+  padding:30px;
   box-shadow: 0 8px 10px rgba(14, 45, 75, 0.15);
   min-height:110px;
 }
