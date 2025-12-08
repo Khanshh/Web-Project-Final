@@ -106,7 +106,6 @@ const ListChucVu = () => {
                     <td>{item.ten_chuc_vu}</td>
                     <td>
                       <div className="buttons_group">
-                        <button className="button_edit" onClick={() => {setformUpdate(true); setmaCVCU(item.ma_chuc_vu)}}> 🖋️ </button>
                         <button className="button_delete" onClick={() => handleDeleteChucVu(item.ma_chuc_vu)}> 🗑️ </button>
                       </div>
                     </td>

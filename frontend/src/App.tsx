@@ -433,13 +433,6 @@ function App() {
 
           <button type="submit">Đăng nhập</button>
         </form>
-
-        <p className="register">
-          Chưa có tài khoản?{" "}
-          <span className="reg-link" onClick={() => setShowRegister(true)}>
-            Đăng ký ngay
-          </span>
-        </p>
       </div>
     </div>
   );
