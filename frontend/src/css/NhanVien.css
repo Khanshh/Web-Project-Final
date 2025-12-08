@@ -44,8 +44,7 @@
   justify-content: flex-end;
   align-items: center;
   gap: 10px;
-  height: 36px;
-  width: 40%;
+  height: 36px; 
 } 
 
 .searchbox_nv input {
@@ -54,8 +53,7 @@
   border-radius: 6px;
   font-size: 14px;
   transition: border 0.2s;
-  flex: 1;
-  width: auto;
+  width: 60%;
   height: 36px;
   margin: 0;
 }
@@ -68,13 +66,18 @@
   border: 1px solid #82d1f0;
   height: 36px;
   color: #ffffff;
-  padding: 6px 12px;
+  padding: 0 16px;
   font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.2s;
   border-radius: 6px;
-  flex-shrink: 0;
+  box-shadow: none;
+  margin: 0;
+  padding: 14px 0px;
+  border: 1px solid #82d1f0;
+  border-radius: 12px;
 }
 
 .button_view_hidden:hover {
@@ -84,7 +87,7 @@
 
 .showtable {
   padding: 0 10px;
-  width: auto;
+  width: 50%;
   text-align: center;
   height: 36px;
   margin: 0;
@@ -110,7 +113,7 @@
 .content_title_nv {
   display: flex;
   align-items: center;
-  width: auto;
+  width: 50%;
   height: 36px;
   margin: 0;
 }

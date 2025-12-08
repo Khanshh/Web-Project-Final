@@ -101,6 +101,32 @@ async def add_nhanvien(
     await session.refresh(new_nv)
     return serialize_nv(new_nv)
 
+@router.put("/hide-all", response_description="Hide all nhan vien")
+async def hide_all_nhanvien(session: AsyncSession = Depends(get_session)):
+    """Đánh dấu ẩn tất cả nhân viên đang hoạt động."""
+    result = await session.execute(
+        update(NhanVien)
+        .where(NhanVien.trang_thai != "Đã ẩn")
+        .values(trang_thai="Đã ẩn")
+        .returning(NhanVien.ma_nhan_vien)
+    )
+    await session.commit()
+    hidden_ids = [row[0] for row in result.fetchall()]
+    return {"message": "Hidden all active nhan vien", "count": len(hidden_ids), "ids": hidden_ids}
+
+@router.put("/restore-all", response_description="Restore all nhan vien")
+async def restore_all_nhanvien(session: AsyncSession = Depends(get_session)):
+    """Bỏ ẩn tất cả nhân viên đang ở trạng thái 'Đã ẩn'."""
+    result = await session.execute(
+        update(NhanVien)
+        .where(NhanVien.trang_thai == "Đã ẩn")
+        .values(trang_thai="Hoạt động")
+        .returning(NhanVien.ma_nhan_vien)
+    )
+    await session.commit()
+    restored_ids = [row[0] for row in result.fetchall()]
+    return {"message": "Restored all hidden nhan vien", "count": len(restored_ids), "ids": restored_ids}
+
 @router.put("/{id}")
 async def update_nhanvien(
     id: str,

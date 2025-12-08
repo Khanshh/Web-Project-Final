@@ -37,7 +37,6 @@ const ListNhanVien = () => {
   const [mucLuongCoBanMoi, setmucLuongCoBanMoi] = useState("");
   const [searchBox, setSearchBox] = useState("");
 
-  const [showTable, setShowTable] = useState(true);
   const [showHidden, setShowHidden] = useState(false);
   const [phongBan, setPhongBan] = useState<PhongBan[]>([]);
   const [chucVu, setChucVu] = useState<ChucVu[]>([]);
@@ -73,6 +72,32 @@ const ListNhanVien = () => {
       .then((res) => setChucVu(res.data))
       .catch((err) => console.error("Lỗi khi lấy dữ liệu:", err));  
   } 
+
+  const handleHideAllNhanVien = async() => {
+    if (!window.confirm("Bạn chắc chắn muốn ẩn tất cả nhân viên đang hoạt động?")) {
+      return;
+    }
+    try {
+      await axios.put("http://localhost:5000/api/nhanvien/hide-all");
+      fetchData();
+      alert("Đã ẩn tất cả nhân viên đang hoạt động.");
+    } catch (error) {
+      alert("Ẩn tất cả nhân viên thất bại.");
+    }
+  }
+
+  const handleRestoreAllNhanVien = async() => {
+    if (!window.confirm("Bạn chắc chắn muốn bỏ ẩn tất cả nhân viên?")) {
+      return;
+    }
+    try {
+      await axios.put("http://localhost:5000/api/nhanvien/restore-all");
+      fetchData();
+      alert("Đã bỏ ẩn tất cả nhân viên.");
+    } catch (error) {
+      alert("Bỏ ẩn tất cả nhân viên thất bại.");
+    }
+  }
 
   const handleAddNhanVien = async() => {
     console.log({ hoTen, maPhong, maChucVu, mucLuongCoBan });
@@ -202,60 +227,60 @@ const ListNhanVien = () => {
             </button>
           </div>
           <div className="showtable">
-            <button onClick={() => setShowTable(!showTable)}>{showTable ? "Ẩn nhân viên" : "Hiển thị nhân viên"}</button>
+            <button onClick={showHidden ? handleRestoreAllNhanVien : handleHideAllNhanVien}>
+              {showHidden ? "Bỏ ẩn tất cả" : "Ẩn nhân viên"}
+            </button>
           </div>
           <div className="content_title_nv">
             <button onClick={() => setshowForm(true)}>+ Thêm nhân viên</button>
           </div>
         </div>
 
-        {showTable && (
-          <div className="content_main">
-            <div className="content_main_table">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Mã NV</th>
-                    <th>Tên nhân viên</th>
-                    <th>Phòng ban</th>
-                    <th>Chức vụ</th>
-                    <th>Lương cơ bản</th>
-                    <th>Trạng thái</th>
-                    <th>Thao tác</th>
+        <div className="content_main">
+          <div className="content_main_table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Mã NV</th>
+                  <th>Tên nhân viên</th>
+                  <th>Phòng ban</th>
+                  <th>Chức vụ</th>
+                  <th>Lương cơ bản</th>
+                  <th>Trạng thái</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                {handleSearch.map((item) => (
+                  <tr key={item.ma_nhan_vien}>
+                    <td>{item.ma_nhan_vien}</td>
+                    <td>{item.ho_ten}</td>
+                    <td>{item.ma_phong}</td>
+                    <td>{item.ma_chuc_vu}</td>
+                    <td>{item.muc_luong_co_ban} đ</td>
+                    <td>{item.trang_thai || "Hoạt động"}</td>
+                    <td>
+                      <div className="buttons_group">
+                        {showHidden ? (
+                          <>
+                            <button className="button_restore" onClick={() => handleRestoreNhanVien(item.ma_nhan_vien)}> 🔄 </button>
+                            <button className="button_delete" onClick={() => handleDeleteNhanVien(item.ma_nhan_vien)}> 🗑️ </button>
+                          </>
+                        ) : (
+                          <>
+                            <button className="button_edit" onClick={() => openUpdateForm(item)}> 🖋️ </button>
+                            <button className="button_hide" onClick={() => handleHideNhanVien(item.ma_nhan_vien)}> 👁️ </button>
+                            <button className="button_delete" onClick={() => handleDeleteNhanVien(item.ma_nhan_vien)}> 🗑️ </button>
+                          </>
+                        )}
+                      </div>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {handleSearch.map((item) => (
-                    <tr key={item.ma_nhan_vien}>
-                      <td>{item.ma_nhan_vien}</td>
-                      <td>{item.ho_ten}</td>
-                      <td>{item.ma_phong}</td>
-                      <td>{item.ma_chuc_vu}</td>
-                      <td>{item.muc_luong_co_ban} đ</td>
-                      <td>{item.trang_thai || "Hoạt động"}</td>
-                      <td>
-                        <div className="buttons_group">
-                          {showHidden ? (
-                            <>
-                              <button className="button_restore" onClick={() => handleRestoreNhanVien(item.ma_nhan_vien)}> 🔄 </button>
-                              <button className="button_delete" onClick={() => handleDeleteNhanVien(item.ma_nhan_vien)}> 🗑️ </button>
-                            </>
-                          ) : (
-                            <>
-                              <button className="button_edit" onClick={() => openUpdateForm(item)}> 🖋️ </button>
-                              <button className="button_hide" onClick={() => handleHideNhanVien(item.ma_nhan_vien)}> 👁️ </button>
-                              <button className="button_delete" onClick={() => handleDeleteNhanVien(item.ma_nhan_vien)}> 🗑️ </button>
-                            </>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
           </div>
-        )}        
+        </div>        
 
 
         {showForm && (
