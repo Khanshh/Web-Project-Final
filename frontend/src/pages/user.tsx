@@ -121,9 +121,9 @@ export default function User({ username, maNhanVien, onLogout }: { username: str
               <div className="user-header">
                 <div>
                   <h2>{userInfo.ho_ten}</h2>
-                  <p>Đơn vị: {userInfo.department}</p>
+                  <p>Phòng ban: {userInfo.department}</p>
                   <p>Chức vụ: {userInfo.role}</p>
-                  <p><i className="icon-company"></i> A.ISOFT</p>
+                  <p><i className="icon-company"></i></p>
                 </div>
                 <div className="user-avatar-circle">
                   {userInfo.ho_ten.split(" ").map((n: string) => n[0]).join("")}
