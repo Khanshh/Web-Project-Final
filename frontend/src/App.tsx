@@ -113,7 +113,6 @@ function App() {
       const colors = ["#4f8beb", "#0350f5", "#72c2ff", "#a8d5ff", "#5ba3f5", "#1e6dd0"];
       const backgroundColors = data.labels.map((_, i) => colors[i % colors.length]);
       const borderColors = data.labels.map((_, i) => colors[i % colors.length]);
-
       chartInstanceRef.current = new Chart(chartRef.current, {
         type: "bar",
         data: {

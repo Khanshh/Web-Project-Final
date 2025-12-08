@@ -123,10 +123,7 @@ const ListNhanVien = () => {
         muc_luong_co_ban_moi: mucLuongCoBanMoi
       });
       fetchData();
-      setmaNVMoi("")
       sethoTenMoi("");
-      setmaPhongMoi("");
-      setmaChucVuMoi("");
       setmucLuongCoBanMoi("");
       setformUpdate(false);
       alert("Bạn chắc chắn muốn cập nhật nhân viên này?");
@@ -329,17 +326,7 @@ const ListNhanVien = () => {
                 <h4>Sửa nhân viên</h4>
                 <p>Cập nhật thông tin nhân viên</p>
               </div>
-              <div className="form_input_type">
-                <button onClick={() => { setShowTTNV(true); setShowTKDN(false); }}>
-                  Thông Tin Nhân Viên
-                </button>
 
-                <button onClick={() => { setShowTKDN(true); setShowTTNV(false); }}>
-                  Tài Khoản Đăng Nhập
-                </button>
-              </div>
-
-              {showTTNV && (
               <div className="form_inputs_ttnv">
                 <div className="form_input">
                   <label>Tên nhân viên</label>
@@ -350,34 +337,6 @@ const ListNhanVien = () => {
                   />
                 </div>
                 <div className="form_input">
-                  <label>Phòng ban</label>
-                  <select 
-                    value={maPhongMoi}
-                    onChange={(e) => setmaPhongMoi(e.target.value)}
-                    >
-                      <option value="">--- Chọn ---</option>
-                      {phongBan.map((pb) => (
-                        <option key={pb.ma_phong} value={pb.ma_phong}>
-                          {pb.ten_phong} ({pb.ma_phong})
-                        </option>
-                      ))}
-                  </select>
-                </div>
-                <div className="form_input">
-                  <label>Chức vụ</label>
-                  <select 
-                    value={maChucVuMoi}
-                    onChange={(e) => setmaChucVuMoi(e.target.value)}
-                    >
-                      <option value="">--- Chọn ---</option>
-                      {chucVu.map((cv) => (
-                        <option key={cv.ma_chuc_vu} value={cv.ma_chuc_vu}>
-                          {cv.ten_chuc_vu} ({cv.ma_chuc_vu})
-                        </option>
-                      ))}
-                  </select>
-                </div>
-                <div className="form_input">
                   <label>Lương cơ bản (VNĐ/tháng)</label>
                   <input 
                     type="number"
@@ -385,29 +344,8 @@ const ListNhanVien = () => {
                     onChange={(e) => setmucLuongCoBanMoi(e.target.value)} 
                     />
                 </div>
-              </div> 
-              )}
-
-              {showTKDN && (
-              <div className="form_inputs_tkdn">
-                <div className="form_input">
-                  <label>Tên đăng nhập</label>
-                  <input
-                    type="text"
-                    value={userMoi}
-                    onChange={(e) => setUserMoi(e.target.value)}
-                  />
-                </div>
-                <div className="form_input">
-                  <label>Mật khẩu</label>
-                  <input
-                    type="password"
-                    value={passMoi}
-                    onChange={(e) => setPassMoi(e.target.value)}
-                  />
-                </div>
               </div>
-              )} 
+              
               <div className="form_buttons_type_nv">
                 <div className="button_add">
                   <button onClick={() =>handleUpdateNhanVien(maNVCu)}> Cập nhật </button>
