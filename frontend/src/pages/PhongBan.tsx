@@ -143,7 +143,6 @@ const ListPhongBan = () => {
                     <td>{item.trang_thai}</td>
                     <td>
                       <div className="buttons_group">
-                        <button className="button_edit" onClick={() => {setformUpdate(true); setmaPBCu(item.ma_phong)}}> 🖋️ </button>
                         <button className="button_delete" onClick={() => handleDeletePhongBan(item.ma_phong)}> 🗑️ </button>
                       </div>
                     </td>
