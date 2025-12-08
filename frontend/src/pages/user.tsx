@@ -34,7 +34,7 @@ export default function User({ username, maNhanVien, onLogout }: { username: str
       setUserInfo({
         ho_ten: res.data.name,
         department: res.data.department,
-        role: res.data.role,
+        role: userInfo.role,
         employeeId: res.data.employeeId,
         luong_co_ban: res.data.muc_luong_co_ban || "0"
       });
@@ -122,7 +122,7 @@ export default function User({ username, maNhanVien, onLogout }: { username: str
                 <div>
                   <h2>{userInfo.ho_ten}</h2>
                   <p>Đơn vị: {userInfo.department}</p>
-                  <p>Vai trò: {userInfo.role}</p>
+                  <p>Chức vụ: {userInfo.role}</p>
                   <p><i className="icon-company"></i> A.ISOFT</p>
                 </div>
                 <div className="user-avatar-circle">

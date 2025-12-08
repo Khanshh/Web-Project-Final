@@ -125,7 +125,7 @@
 }
 
 .main_detail_table th:last-child {
-  text-align: right;
+  text-align: left;
 }
 
 .main_detail_table td {
@@ -135,7 +135,7 @@
 }
 
 .main_detail_table td:last-child {
-  text-align: right;
+  text-align: left;
 }
 
 .main_detail_table tr:hover td {
