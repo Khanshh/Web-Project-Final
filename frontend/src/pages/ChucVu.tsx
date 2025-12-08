@@ -14,7 +14,6 @@ const ListChucVu = () => {
   const [tenCV, settenCV] = useState("");
   const [formUpdate, setformUpdate] = useState(false);
   const [maCVCU, setmaCVCU] = useState("");
-  const [maCVMoi, setmaCVMoi] = useState("");
   const [tenCVMoi, settenCVMoi] = useState("");
 
   useEffect(() => {
@@ -60,17 +59,15 @@ const ListChucVu = () => {
   };
 
   const handleUpdateChucVu = async(ma_chuc_vu: string) => {
-    if (!maCVMoi || !tenCVMoi) {
+    if (!tenCVMoi) {
       alert("Bạn chưa điền đủ thông tin.");
       return;
     }
     try {
       await axios.put(`http://localhost:5000/api/chucvu/${ma_chuc_vu}`, {
-        ma_chuc_vu_moi: maCVMoi,
         ten_chuc_vu_moi: tenCVMoi
       });
       fetchData();
-      setmaCVMoi("");
       settenCVMoi("");
       setformUpdate(false);
       alert("Bạn chắc chắn muốn cập nhật chức vụ này?");
@@ -168,8 +165,8 @@ const ListChucVu = () => {
                 <label>Mã chức vụ mới:</label>
                 <input
                   type="text"
-                  value={maCVMoi}
-                  onChange={(e) => setmaCVMoi(e.target.value)}
+                  value={maCVCU}
+                  disabled
                 />
               </div>
               <div className="form_input">

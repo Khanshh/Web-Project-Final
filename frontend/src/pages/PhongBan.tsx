@@ -19,7 +19,6 @@ const ListPhongBan = () => {
   const [trangThai, settrangThai] = useState("");
   const [formUpdate, setformUpdate] = useState(false);
   const [maPBCu, setmaPBCu] = useState("");
-  const [maPBMoi, setmaPBMoi] = useState("");
   const [tenPBMoi, settenPBMoi] = useState("");
   const [namThanhLapMoi, setnamThanhLapMoi] = useState("");
   const [trangThaiMoi, settrangThaiMoi] = useState("");
@@ -73,19 +72,17 @@ const ListPhongBan = () => {
   }
 
   const handleUpdatePhongBan = async(ma_phong: string) => {
-    if(!maPBMoi || !tenPBMoi || !namThanhLapMoi || !trangThaiMoi) {
+    if(!tenPBMoi || !namThanhLapMoi || !trangThaiMoi) {
       alert("Bạn chưa điền đủ thông tin.")
       return;
     }
     try {
       await axios.put(`http://localhost:5000/api/phongban/${ma_phong}`, {
-        ma_phong_ban_moi: maPBMoi,
         ten_phong_ban_moi: tenPBMoi,
         nam_thanh_lap_moi: namThanhLapMoi,
         trang_thai_moi: trangThaiMoi
       })
       fetchData();
-      setmaPBMoi("")
       settenPBMoi("")
       setnamThanhLapMoi("")
       settrangThaiMoi("")
@@ -225,8 +222,8 @@ const ListPhongBan = () => {
                 <label>Mã phòng:</label>
                 <input
                   type="text"
-                  value={maPBMoi}
-                  onChange={(e) => setmaPBMoi(e.target.value)}
+                  value={maPBCu}
+                  disabled
                 />
               </div>
               <div className="form_input">
@@ -248,8 +245,8 @@ const ListPhongBan = () => {
               <div className="form_input">
                 <label>Trạng thái:</label>
                 <select
-                  value={trangThai}
-                  onChange={(e) => settrangThai(e.target.value)}
+                  value={trangThaiMoi}
+                  onChange={(e) => settrangThaiMoi(e.target.value)}
                   >
                     <option value="">--- Chọn ---</option>
                     <option value="Hoạt động">Hoạt động</option>
