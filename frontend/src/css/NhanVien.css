@@ -152,6 +152,14 @@
   background: #ffffff;
   padding: 4px 6px;
 }
+.buttons_group .button_hide {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  background: #ffffff;
+  padding: 4px 6px;
+}
 
 .content_main_table th {
   background: #fff;

@@ -111,6 +111,16 @@ const ListNhanVien = () => {
     }
   }
 
+  const handleHideNhanVien = async(ma_nhan_vien: string) => {
+    try {
+      await axios.put(`http://localhost:5000/api/nhanvien/${ma_nhan_vien}/hide`);
+      fetchData();
+      alert("Ẩn nhân viên thành công!");
+    } catch (error) {
+      alert("Ẩn nhân viên thất bại.");
+    }
+  }
+
   const handleUpdateNhanVien = async(ma_nhan_vien: string) => {
     if (!hoTenMoi || !maPhongMoi || !maChucVuMoi || !mucLuongCoBanMoi) {
       alert("Bạn chưa điền đủ thông tin.");
@@ -199,6 +209,7 @@ const ListNhanVien = () => {
                       <td>
                         <div className="buttons_group">
                           <button className="button_edit" onClick={() => openUpdateForm(item)}> 🖋️ </button>
+                          <button className="button_hide" onClick={() => handleHideNhanVien(item.ma_nhan_vien)}> 👁️ </button>
                           <button className="button_delete" onClick={() => handleDeleteNhanVien(item.ma_nhan_vien)}> 🗑️ </button>
                         </div>
                       </td>
