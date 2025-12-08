@@ -17,11 +17,6 @@ const ListPhongBan = () => {
   const [tenPB, settenPB] = useState("");
   const [namThanhLap, setnamThanhLap] = useState("");
   const [trangThai, settrangThai] = useState("");
-  const [formUpdate, setformUpdate] = useState(false);
-  const [maPBCu, setmaPBCu] = useState("");
-  const [tenPBMoi, settenPBMoi] = useState("");
-  const [namThanhLapMoi, setnamThanhLapMoi] = useState("");
-  const [trangThaiMoi, settrangThaiMoi] = useState("");
   const [searchBox, setSearchBox] = useState("");
 
 
@@ -71,27 +66,6 @@ const ListPhongBan = () => {
     }
   }
 
-  const handleUpdatePhongBan = async(ma_phong: string) => {
-    if(!tenPBMoi || !namThanhLapMoi || !trangThaiMoi) {
-      alert("Bạn chưa điền đủ thông tin.")
-      return;
-    }
-    try {
-      await axios.put(`http://localhost:5000/api/phongban/${ma_phong}`, {
-        ten_phong_ban_moi: tenPBMoi,
-        nam_thanh_lap_moi: namThanhLapMoi,
-        trang_thai_moi: trangThaiMoi
-      })
-      fetchData();
-      settenPBMoi("")
-      setnamThanhLapMoi("")
-      settrangThaiMoi("")
-      setformUpdate(false)
-      alert("Bạn chắc chắn muốn cập nhật phòng này?")
-    } catch (error) {
-        alert("Cập nhập thành công.")
-    }
-  }
 
   const handleSearch = phongBan.filter((pb) => {
     return  pb.ten_phong.toLowerCase().includes(searchBox.toLowerCase()) ||
@@ -205,61 +179,6 @@ const ListPhongBan = () => {
                   <button onClick={() => setshowForm(false)}> Hủy </button>
                 </div>
               </div>  
-            </div>
-          </div>
-        )}
-
-
-        {formUpdate && (
-          <div className="form_overlay" onClick={() => setformUpdate(false)}>
-            <div className="form_container" onClick={(e) => e.stopPropagation()}>
-              <div>
-                <h4>Sửa phòng ban</h4>
-                <p>Cập nhật thông tin phòng ban</p>
-              </div>
-              <div className="form_input">
-                <label>Mã phòng:</label>
-                <input
-                  type="text"
-                  value={maPBCu}
-                  disabled
-                />
-              </div>
-              <div className="form_input">
-                <label>Tên phòng:</label>
-                <input
-                  type="text"
-                  value={tenPBMoi}
-                  onChange={(e) => settenPBMoi(e.target.value)}
-                />
-              </div>
-              <div className="form_input">
-                <label>Năm thành lập:</label>
-                <input
-                  type="text"
-                  value={namThanhLapMoi}
-                  onChange={(e) => setnamThanhLapMoi(e.target.value)}
-                />
-              </div>
-              <div className="form_input">
-                <label>Trạng thái:</label>
-                <select
-                  value={trangThaiMoi}
-                  onChange={(e) => settrangThaiMoi(e.target.value)}
-                  >
-                    <option value="">--- Chọn ---</option>
-                    <option value="Hoạt động">Hoạt động</option>
-                    <option value="Ngừng hoạt động">Ngừng hoạt động</option>
-                </select>
-              </div>
-              <div className="form_buttons_pb">
-                <div className="button_add">
-                  <button onClick={() =>handleUpdatePhongBan(maPBCu)}> Cập nhật </button>
-                </div>
-                <div className="button_cancel">
-                  <button onClick={() => setformUpdate(false)}> Hủy </button>
-                </div>
-              </div>
             </div>
           </div>
         )}

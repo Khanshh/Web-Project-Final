@@ -32,8 +32,6 @@ const ListNhanVien = () => {
   const [formUpdate, setformUpdate] = useState(false);
   const [maNVCu, setmaNVCu] = useState("");
   const [hoTenMoi, sethoTenMoi] = useState("");
-  const [maPhongMoi, setmaPhongMoi] = useState("");
-  const [maChucVuMoi, setmaChucVuMoi] = useState("");
   const [mucLuongCoBanMoi, setmucLuongCoBanMoi] = useState("");
   const [searchBox, setSearchBox] = useState("");
 
@@ -46,8 +44,6 @@ const ListNhanVien = () => {
 
   const [user, setUser] = useState("");
   const [pass, setPass] = useState("");
-  const [userMoi, setUserMoi] = useState("");
-  const [passMoi, setPassMoi] = useState("");
 
   useEffect(() => {
     fetchData();
@@ -168,14 +164,12 @@ const ListNhanVien = () => {
   }
 
   const handleUpdateNhanVien = async(ma_nhan_vien: string) => {
-    if (!hoTenMoi || !maPhongMoi || !maChucVuMoi || !mucLuongCoBanMoi) {
+    if (!hoTenMoi || !mucLuongCoBanMoi) {
       alert("Bạn chưa điền đủ thông tin.");
       return;
     }try {
       await axios.put(`http://localhost:5000/api/nhanvien/${ma_nhan_vien}`, {
         ho_ten_moi: hoTenMoi,
-        ma_phong_moi: maPhongMoi,
-        ma_chuc_vu_moi: maChucVuMoi,
         muc_luong_co_ban_moi: mucLuongCoBanMoi
       });
       fetchData();
@@ -199,8 +193,6 @@ const ListNhanVien = () => {
   const openUpdateForm = (nv: NhanVien) => {
     setmaNVCu(nv.ma_nhan_vien);
     sethoTenMoi(nv.ho_ten);
-    setmaPhongMoi(nv.ma_phong);
-    setmaChucVuMoi(nv.ma_chuc_vu);
     setmucLuongCoBanMoi(nv.muc_luong_co_ban);
     setformUpdate(true);
   };

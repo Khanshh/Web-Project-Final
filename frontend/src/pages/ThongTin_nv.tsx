@@ -103,9 +103,6 @@ const ListTaiKhoanNV: React.FC<ListTaiKhoanNVProps> = ({ username }) => {
           onClick={() => setChangePasswordForm(true)}>
           <span>Đổi mật khẩu</span>
         </button>
-        <button className="actions-button-2">
-          <span>Đăng xuất</span>
-        </button>
       </div>
 
 
