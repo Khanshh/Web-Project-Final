@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import "../css/TrangChu.css";
+// import "../css/TrangChu.css";
+import "../css/ChamCong.css";
 import axios from "axios";
 
 interface ChamCong {
