@@ -19,12 +19,32 @@ def serialize_nv(nv: NhanVien):
         "ma_phong": nv.ma_phong,
         "ma_chuc_vu": nv.ma_chuc_vu,
         "muc_luong_co_ban": str(nv.muc_luong_co_ban or Decimal("0")),
+        "trang_thai": nv.trang_thai or "Hoạt động",
     }
 
 
 @router.get("/", response_description="Nhan vien retrieved")
-async def get_nhanviens(session: AsyncSession = Depends(get_session)):
-    result = await session.execute(select(NhanVien))
+async def get_nhanviens(
+    hidden: bool = False,
+    session: AsyncSession = Depends(get_session)
+):
+    """Lấy danh sách nhân viên. hidden=True để lấy nhân viên đã ẩn"""
+    from sqlalchemy import or_
+    if hidden:
+        # Chỉ lấy nhân viên đã ẩn
+        result = await session.execute(
+            select(NhanVien).where(NhanVien.trang_thai == "Đã ẩn")
+        )
+    else:
+        # Lấy nhân viên đang hoạt động (không phải "Đã ẩn")
+        result = await session.execute(
+            select(NhanVien).where(
+                or_(
+                    NhanVien.trang_thai != "Đã ẩn",
+                    NhanVien.trang_thai.is_(None)
+                )
+            )
+        )
     return [serialize_nv(nv) for nv in result.scalars().all()]
 
 @router.post("/", response_description="Nhan vien data added into the database")
@@ -62,6 +82,7 @@ async def add_nhanvien(
         ma_chuc_vu=ma_chuc_vu,
         muc_luong_co_ban=Decimal(data["muc_luong_co_ban"]),
         thu_tu_vao_cong_ty=next_order,
+        trang_thai="Hoạt động",
     )
     session.add(new_nv)
 
@@ -116,6 +137,28 @@ async def update_nhanvien(
 
     await session.commit()
     return {"message": "Nhan vien updated successfully"}
+
+@router.put("/{id}/hide", response_description="Hide nhan vien")
+async def hide_nhanvien(id: str, session: AsyncSession = Depends(get_session)):
+    """Ẩn nhân viên (đánh dấu là đã ẩn thay vì xóa)"""
+    nv = await session.get(NhanVien, id)
+    if not nv:
+        raise HTTPException(status_code=404, detail="Nhan vien not found")
+    
+    nv.trang_thai = "Đã ẩn"
+    await session.commit()
+    return {"message": "Nhan vien hidden successfully"}
+
+@router.put("/{id}/restore", response_description="Restore nhan vien")
+async def restore_nhanvien(id: str, session: AsyncSession = Depends(get_session)):
+    """Khôi phục nhân viên đã ẩn"""
+    nv = await session.get(NhanVien, id)
+    if not nv:
+        raise HTTPException(status_code=404, detail="Nhan vien not found")
+    
+    nv.trang_thai = "Hoạt động"
+    await session.commit()
+    return {"message": "Nhan vien restored successfully"}
 
 @router.delete("/{id}", response_description="Nhan vien data deleted from the database")
 async def delete_nhanvien(id: str, session: AsyncSession = Depends(get_session)):

@@ -44,6 +44,27 @@ async def init_db():
                 """
             )
         )
+        # Migration: thêm cột trang_thai nếu chưa tồn tại
+        await conn.execute(
+            text(
+                """
+                DO $$
+                BEGIN
+                    IF NOT EXISTS (
+                        SELECT 1
+                        FROM information_schema.columns
+                        WHERE table_name = 'nhanvien'
+                          AND column_name = 'trang_thai'
+                    ) THEN
+                        ALTER TABLE nhanvien
+                        ADD COLUMN trang_thai VARCHAR(50) NOT NULL DEFAULT 'Hoạt động';
+                        -- Cập nhật các giá trị NULL thành 'Hoạt động'
+                        UPDATE nhanvien SET trang_thai = 'Hoạt động' WHERE trang_thai IS NULL;
+                    END IF;
+                END$$;
+                """
+            )
+        )
     await seed_admin_user()
     await seed_default_chucvu()
 

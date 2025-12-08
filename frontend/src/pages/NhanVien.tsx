@@ -9,6 +9,7 @@ interface NhanVien {
   ma_phong: string;
   ma_chuc_vu: string;
   muc_luong_co_ban: string;
+  trang_thai?: string;
 } 
 
 interface ChucVu {
@@ -37,6 +38,7 @@ const ListNhanVien = () => {
   const [searchBox, setSearchBox] = useState("");
 
   const [showTable, setShowTable] = useState(true);
+  const [showHidden, setShowHidden] = useState(false);
   const [phongBan, setPhongBan] = useState<PhongBan[]>([]);
   const [chucVu, setChucVu] = useState<ChucVu[]>([]);
 
@@ -50,11 +52,14 @@ const ListNhanVien = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [showHidden]);
 
   const fetchData = () => {
+    const url = showHidden 
+      ? "http://localhost:5000/api/nhanvien?hidden=true"
+      : "http://localhost:5000/api/nhanvien";
     axios
-      .get<NhanVien[]>("http://localhost:5000/api/nhanvien")
+      .get<NhanVien[]>(url)
       .then((res) => setNhanVien(res.data))
       .catch((err) => console.error("Lỗi khi lấy dữ liệu:", err));
 
@@ -112,12 +117,28 @@ const ListNhanVien = () => {
   }
 
   const handleHideNhanVien = async(ma_nhan_vien: string) => {
+    if (!window.confirm("Bạn chắc chắn muốn ẩn nhân viên này?")) {
+      return;
+    }
     try {
       await axios.put(`http://localhost:5000/api/nhanvien/${ma_nhan_vien}/hide`);
       fetchData();
       alert("Ẩn nhân viên thành công!");
     } catch (error) {
       alert("Ẩn nhân viên thất bại.");
+    }
+  }
+
+  const handleRestoreNhanVien = async(ma_nhan_vien: string) => {
+    if (!window.confirm("Bạn chắc chắn muốn khôi phục nhân viên này?")) {
+      return;
+    }
+    try {
+      await axios.put(`http://localhost:5000/api/nhanvien/${ma_nhan_vien}/restore`);
+      fetchData();
+      alert("Khôi phục nhân viên thành công!");
+    } catch (error) {
+      alert("Khôi phục nhân viên thất bại.");
     }
   }
 
@@ -173,6 +194,12 @@ const ListNhanVien = () => {
                     value={searchBox}
                     onChange={(e) => setSearchBox(e.target.value)}
             />
+            <button 
+              className="button_view_hidden" 
+              onClick={() => setShowHidden(!showHidden)}
+            >
+              {showHidden ? "Xem nhân viên đang hoạt động" : "Xem nhân viên đã ẩn"}
+            </button>
           </div>
           <div className="showtable">
             <button onClick={() => setShowTable(!showTable)}>{showTable ? "Ẩn nhân viên" : "Hiển thị nhân viên"}</button>
@@ -205,12 +232,21 @@ const ListNhanVien = () => {
                       <td>{item.ma_phong}</td>
                       <td>{item.ma_chuc_vu}</td>
                       <td>{item.muc_luong_co_ban} đ</td>
-                      <td>Hoạt động</td>
+                      <td>{item.trang_thai || "Hoạt động"}</td>
                       <td>
                         <div className="buttons_group">
-                          <button className="button_edit" onClick={() => openUpdateForm(item)}> 🖋️ </button>
-                          <button className="button_hide" onClick={() => handleHideNhanVien(item.ma_nhan_vien)}> 👁️ </button>
-                          <button className="button_delete" onClick={() => handleDeleteNhanVien(item.ma_nhan_vien)}> 🗑️ </button>
+                          {showHidden ? (
+                            <>
+                              <button className="button_restore" onClick={() => handleRestoreNhanVien(item.ma_nhan_vien)}> 🔄 </button>
+                              <button className="button_delete" onClick={() => handleDeleteNhanVien(item.ma_nhan_vien)}> 🗑️ </button>
+                            </>
+                          ) : (
+                            <>
+                              <button className="button_edit" onClick={() => openUpdateForm(item)}> 🖋️ </button>
+                              <button className="button_hide" onClick={() => handleHideNhanVien(item.ma_nhan_vien)}> 👁️ </button>
+                              <button className="button_delete" onClick={() => handleDeleteNhanVien(item.ma_nhan_vien)}> 🗑️ </button>
+                            </>
+                          )}
                         </div>
                       </td>
                     </tr>

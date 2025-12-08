@@ -45,6 +45,7 @@ class NhanVien(Base):
     muc_luong_co_ban = Column(Numeric(14, 2), nullable=False, default=0)
     # Thứ tự vào công ty (dùng để sinh mã nhân viên theo đúng quy tắc)
     thu_tu_vao_cong_ty = Column(Integer, nullable=True)
+    trang_thai = Column(String(50), nullable=False, default="Hoạt động")  # "Hoạt động" hoặc "Đã ẩn"
 
     phongban = relationship("PhongBan", back_populates="nhanviens")
     chucvu = relationship("ChucVu", back_populates="nhanviens")
