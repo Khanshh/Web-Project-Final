@@ -29,7 +29,7 @@ const ListTaiKhoanNV: React.FC<ListTaiKhoanNVProps> = ({ username }) => {
   const fetchData = () => {
     axios
       .get<TaiKhoan>(`http://localhost:5000/api/taikhoan/${username}`)
-      .then((res) => setUserInfo(res.data))
+      .then((res) => setUserInfo({...res.data, role: "Nhân viên"}))
       .catch((err) => console.error("Lỗi khi lấy dữ liệu:", err));
   };
 
