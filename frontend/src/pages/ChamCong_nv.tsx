@@ -71,6 +71,23 @@ const ListChamCongNV: React.FC<ListChamCongNVProps> = ({ maNhanVien }) => {
     return "ontime";
   };
 
+  // Hàm kiểm tra trạng thái về sớm / đúng giờ khi checkout
+  const checkEarlyStatus = (time: string, shift: "morning" | "afternoon") => {
+    if (!time) return null;
+
+    const [h, m] = time.split(":").map(Number);
+
+    if (shift === "morning") {
+      // Kết thúc buổi sáng 12:00 -> về trước 12:00 là sớm
+      if (h < 12) return "early";
+      return "ontime";
+    }
+
+    // Buổi chiều kết thúc 17:30 -> về trước 17:30 là sớm
+    if (h < 17 || (h === 17 && m < 30)) return "early";
+    return "ontime";
+  };
+
   if (!maNhanVien) {
     return <div>Không có thông tin nhân viên. Vui lòng đăng nhập lại.</div>;
   }
@@ -249,6 +266,24 @@ const ListChamCongNV: React.FC<ListChamCongNVProps> = ({ maNhanVien }) => {
                               )}
                     <br />
                     Check Out: {cc.checkout_sang || "--:--"}
+                              {cc.checkout_sang && (
+                                <span
+                                  style={{
+                                    marginLeft: 6,
+                                    color:
+                                      checkEarlyStatus(cc.checkout_sang, "morning") === "early"
+                                        ? "red"
+                                        : "green",
+                                    fontWeight: 500,
+                                  }}
+                                >
+                                  (
+                                  {checkEarlyStatus(cc.checkout_sang, "morning") === "early"
+                                    ? "Sớm"
+                                    : "Đúng giờ"}
+                                  )
+                                </span>
+                              )}
                   </td>
                   <td>
                     Check In: {cc.checkin_chieu || "--:--"}
@@ -272,6 +307,24 @@ const ListChamCongNV: React.FC<ListChamCongNVProps> = ({ maNhanVien }) => {
                               )}
                     <br />
                     Check Out: {cc.checkout_chieu || "--:--"}
+                              {cc.checkout_chieu && (
+                                <span
+                                  style={{
+                                    marginLeft: 6,
+                                    color:
+                                      checkEarlyStatus(cc.checkout_chieu, "afternoon") === "early"
+                                        ? "red"
+                                        : "green",
+                                    fontWeight: 500,
+                                  }}
+                                >
+                                  (
+                                  {checkEarlyStatus(cc.checkout_chieu, "afternoon") === "early"
+                                    ? "Sớm"
+                                    : "Đúng giờ"}
+                                  )
+                                </span>
+                              )}
                   </td>
                 </tr>
               )) : (
